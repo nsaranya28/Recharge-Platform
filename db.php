@@ -3,7 +3,7 @@
 $host = 'localhost';
 $dbname = 'recharge_db';
 $username = 'root'; // Default XAMPP username
-$password = '';     // Default XAMPP password
+$password = 'pass';     // Default XAMPP password
 
 try {
     // Create a PDO connection
