@@ -92,11 +92,43 @@ if (isset($_POST['process_recharge'])) {
 
             <div class="filter-group">
                 <label>Payment Method</label>
-                <select required>
+                <select id="payment_method" name="payment_method" onchange="togglePaymentFields()" required>
                     <option value="upi">UPI (GPay / PhonePe / Paytm)</option>
                     <option value="card">Credit / Debit Card</option>
                     <option value="netbanking">Net Banking</option>
                 </select>
+            </div>
+
+            <!-- Card Details Section -->
+            <div id="card_fields" style="display: none; border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <div class="filter-group">
+                    <label>Card Number</label>
+                    <input type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="filter-group">
+                        <label>Expiry (MM/YY)</label>
+                        <input type="text" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="filter-group">
+                        <label>CVV</label>
+                        <input type="password" placeholder="***" maxlength="3">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Net Banking Section -->
+            <div id="bank_fields" style="display: none; border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <div class="filter-group">
+                    <label>Select Bank</label>
+                    <select>
+                        <option>State Bank of India</option>
+                        <option>HDFC Bank</option>
+                        <option>ICICI Bank</option>
+                        <option>Axis Bank</option>
+                        <option>Other Bank</option>
+                    </select>
+                </div>
             </div>
 
             <button type="submit" name="process_recharge" class="btn-apply" style="margin-top: 1rem; font-size: 1.1rem; height: 50px;">
@@ -109,6 +141,23 @@ if (isset($_POST['process_recharge'])) {
         </form>
     </div>
 </div>
+
+<script>
+function togglePaymentFields() {
+    const method = document.getElementById('payment_method').value;
+    const cardFields = document.getElementById('card_fields');
+    const bankFields = document.getElementById('bank_fields');
+
+    cardFields.style.display = 'none';
+    bankFields.style.display = 'none';
+
+    if (method === 'card') {
+        cardFields.style.display = 'block';
+    } else if (method === 'netbanking') {
+        bankFields.style.display = 'block';
+    }
+}
+</script>
 
 </body>
 </html>
