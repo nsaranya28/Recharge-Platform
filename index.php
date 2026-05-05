@@ -185,6 +185,10 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                                     <input type="checkbox" name="plan_ids[]" value="<?php echo $plan['id']; ?>">
                                     Add to Compare
                                 </label>
+
+                                <a href="recharge.php?id=<?php echo $plan['id']; ?>" class="btn-apply" style="display: block; text-align: center; text-decoration: none; margin-top: 1rem; background: #10b981;">
+                                    Recharge Now
+                                </a>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
