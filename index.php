@@ -186,7 +186,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                                     Add to Compare
                                 </label>
 
-                                <a href="recharge.php?id=<?php echo $plan['id']; ?>" class="btn-apply" style="display: block; text-align: center; text-decoration: none; margin-top: 1rem; background: #10b981;">
+                                <a href="recharge.php?id=<?php echo $plan['id']; ?>" class="btn-apply" style="display: block; text-align: center; text-decoration: none; margin-top: 1rem; background: var(--primary);">
                                     Recharge Now
                                 </a>
                             </div>

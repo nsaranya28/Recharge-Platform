@@ -18,7 +18,7 @@
         .success-icon {
             width: 80px;
             height: 80px;
-            background: #10b981;
+            background: var(--primary);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -46,7 +46,7 @@
 <div class="container">
     <div class="success-card">
         <div class="success-icon">✓</div>
-        <h1 style="color: #10b981; margin-bottom: 0.5rem;">Recharge Successful!</h1>
+        <h1 style="color: var(--primary); margin-bottom: 0.5rem;">Recharge Successful!</h1>
         <p style="color: var(--text-muted);">Your recharge has been processed successfully.</p>
 
         <div class="receipt-info">

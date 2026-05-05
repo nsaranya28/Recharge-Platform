@@ -1,18 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary: #6366f1;
-    --primary-hover: #4f46e5;
-    --bg-color: #f8fafc;
+    --primary: #7c3aed; /* Vibrant Purple */
+    --primary-hover: #6d28d9;
+    --bg-color: #f5f3ff; /* Very light purple/white bg */
     --card-bg: #ffffff;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --border-color: #e2e8f0;
+    --text-main: #1e1b4b; /* Deep indigo/black */
+    --text-muted: #6d6d91;
+    --border-color: #e9e7ff;
     --accent-jio: #005eb8;
     --accent-airtel: #e30613;
     --accent-vi: #ffb400;
-    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --radius: 12px;
+    --shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.1), 0 8px 10px -6px rgba(124, 58, 237, 0.05);
+    --radius: 16px;
 }
 
 * {
