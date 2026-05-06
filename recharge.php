@@ -87,7 +87,7 @@ if (isset($_POST['process_recharge'])) {
         </div>
 
         <form method="POST" action="recharge.php?id=<?php echo $plan['id']; ?>">
-            <input type="hidden" name="process_recharge" value="1">
+            
 <div class="filter-group">
     <label>Mobile Number</label>
     <input type="tel" name="mobile_number" placeholder="Enter 10 digit number" maxlength="10" pattern="[0-9]{10}" title="Please enter a 10-digit mobile number" required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
