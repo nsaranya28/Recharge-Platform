@@ -28,7 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (strlen($mobile) === 10 && is_numeric($mobile)) {
         // Success redirect
         $price = $plan['price'];
-        header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price));
+        $operator = $plan['operator'];
+        $validity = $plan['validity'];
+        $data = $plan['data_per_day'];
+        
+        header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price) . "&op=" . urlencode($operator) . "&val=" . urlencode($validity) . "&dat=" . urlencode($data));
         exit();
     } else {
         $error = "Please enter a valid 10-digit mobile number.";
