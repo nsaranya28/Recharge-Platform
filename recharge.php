@@ -26,12 +26,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mobile = trim($_POST['mobile_number'] ?? '');
     
     if (strlen($mobile) === 10 && is_numeric($mobile)) {
-        // Success redirect
         $price = $plan['price'];
         $operator = $plan['operator'];
         $validity = $plan['validity'];
         $data = $plan['data_per_day'];
-        
+
+        // Send SMS via Fast2SMS
+        require_once 'fast2sms_helper.php';
+        sendFast2SMS($mobile, $price, $operator);
+
         header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price) . "&op=" . urlencode($operator) . "&val=" . urlencode($validity) . "&dat=" . urlencode($data));
         exit();
     } else {
