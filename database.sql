@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS sims (
     is_best_sim BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-);
+
 
 -- Insert Sample Data
 INSERT INTO plans (operator, price, validity, data_per_day, is_best_plan) VALUES
