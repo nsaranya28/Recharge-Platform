@@ -99,6 +99,14 @@ if (isset($_POST['process_recharge'])) {
                 </select>
             </div>
 
+            <!-- UPI Details Section -->
+            <div id="upi_fields" style="display: block; border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <div class="filter-group">
+                    <label>Enter UPI ID</label>
+                    <input type="text" placeholder="example@ybl, mobile@paytm" pattern="[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}">
+                </div>
+            </div>
+
             <!-- Card Details Section -->
             <div id="card_fields" style="display: none; border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <div class="filter-group">
@@ -147,16 +155,23 @@ function togglePaymentFields() {
     const method = document.getElementById('payment_method').value;
     const cardFields = document.getElementById('card_fields');
     const bankFields = document.getElementById('bank_fields');
+    const upiFields = document.getElementById('upi_fields');
 
-    cardFields.style.display = 'none';
-    bankFields.style.display = 'none';
+    if (cardFields) cardFields.style.display = 'none';
+    if (bankFields) bankFields.style.display = 'none';
+    if (upiFields) upiFields.style.display = 'none';
 
-    if (method === 'card') {
+    if (method === 'card' && cardFields) {
         cardFields.style.display = 'block';
-    } else if (method === 'netbanking') {
+    } else if (method === 'netbanking' && bankFields) {
         bankFields.style.display = 'block';
+    } else if (method === 'upi' && upiFields) {
+        upiFields.style.display = 'block';
     }
 }
+
+// Ensure the correct fields are shown on page load
+window.addEventListener('DOMContentLoaded', togglePaymentFields);
 </script>
 
 </body>
