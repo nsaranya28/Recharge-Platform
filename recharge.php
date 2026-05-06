@@ -18,7 +18,7 @@ if (!$plan) {
 
 // Handle form submission
 $error = '';
-<?php
+
 if (isset($_POST['process_recharge'])) {
     $mobile = $_POST['mobile_number'];
     if (strlen($mobile) == 10 && is_numeric($mobile)) {
@@ -36,7 +36,7 @@ if (isset($_POST['process_recharge'])) {
     }
 }
 ?>
-?>
+>
 
 <!DOCTYPE html>
 <html lang="en">
