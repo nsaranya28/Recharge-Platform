@@ -1,13 +1,16 @@
 <?php
+ob_start();
 require_once 'db.php';
 session_start();
 
-if (!isset($_GET['id'])) {
+// Get Plan ID from URL or POST data
+$plan_id = $_GET['id'] ?? ($_POST['plan_id'] ?? null);
+
+if (!$plan_id) {
     header("Location: index.php");
     exit();
 }
 
-$plan_id = $_GET['id'];
 $stmt = $pdo->prepare("SELECT * FROM plans WHERE id = ?");
 $stmt->execute([$plan_id]);
 $plan = $stmt->fetch();
@@ -19,11 +22,13 @@ if (!$plan) {
 // Handle form submission
 $error = '';
 
-if (isset($_POST['process_recharge'])) {
-    $mobile = $_POST['mobile_number'];
-    if (strlen($mobile) == 10 && is_numeric($mobile)) {
-        // Redirect to success page (simulating a successful payment)
-        header("Location: success.php?mobile=" . $mobile . "&price=" . $plan['price']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $mobile = trim($_POST['mobile_number'] ?? '');
+    
+    if (strlen($mobile) === 10 && is_numeric($mobile)) {
+        // Success redirect
+        $price = $plan['price'];
+        header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price));
         exit();
     } else {
         $error = "Please enter a valid 10-digit mobile number.";
@@ -87,7 +92,8 @@ if (isset($_POST['process_recharge'])) {
         </div>
 
         <form method="POST" action="recharge.php?id=<?php echo $plan['id']; ?>">
-            
+            <input type="hidden" name="plan_id" value="<?php echo htmlspecialchars($plan['id']); ?>">
+            <input type="hidden" name="process_recharge" value="1">
 <div class="filter-group">
     <label>Mobile Number</label>
     <input type="tel" name="mobile_number" placeholder="Enter 10 digit number" maxlength="10" pattern="[0-9]{10}" title="Please enter a 10-digit mobile number" required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
@@ -106,7 +112,7 @@ if (isset($_POST['process_recharge'])) {
             <div id="upi_fields" style="display: block; border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <div class="filter-group">
                     <label>Enter UPI ID</label>
-                    <input type="text" placeholder="example@ybl, mobile@paytm" pattern="[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}">
+                    <input type="text" name="upi_id" placeholder="example@ybl, mobile@paytm">
                 </div>
             </div>
 
@@ -114,16 +120,16 @@ if (isset($_POST['process_recharge'])) {
             <div id="card_fields" style="display: none; border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <div class="filter-group">
                     <label>Card Number</label>
-                    <input type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" oninput="this.value = this.value.replace(/[^0-9 ]/g, '');">
+                    <input type="text" name="card_number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" oninput="this.value = this.value.replace(/[^0-9 ]/g, '');">
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="filter-group">
                         <label>Expiry (MM/YY)</label>
-                        <input type="text" placeholder="MM/YY" maxlength="5" oninput="this.value = this.value.replace(/[^0-9\/]/g, '');">
+                        <input type="text" name="card_expiry" placeholder="MM/YY" maxlength="5" oninput="this.value = this.value.replace(/[^0-9\/]/g, '');">
                     </div>
                     <div class="filter-group">
                         <label>CVV</label>
-                        <input type="password" placeholder="***" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                        <input type="password" name="card_cvv" placeholder="***" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                     </div>
                 </div>
             </div>
@@ -132,7 +138,7 @@ if (isset($_POST['process_recharge'])) {
             <div id="bank_fields" style="display: none; border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <div class="filter-group">
                     <label>Select Bank</label>
-                    <select>
+                    <select name="bank_name">
                         <option>State Bank of India</option>
                         <option>HDFC Bank</option>
                         <option>ICICI Bank</option>
