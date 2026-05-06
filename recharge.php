@@ -22,6 +22,12 @@ $error = '';
 if (isset($_POST['process_recharge'])) {
     $mobile = $_POST['mobile_number'];
     if (strlen($mobile) == 10 && is_numeric($mobile)) {
+    // Redirect to success page (simulating a successful payment)
+    header("Location: success.php?mobile=" . $mobile . "&price=" . $plan['price']);
+    exit();
+} else {
+    $error = "Please enter a valid 10-digit mobile number.";
+}
         // Generate OTP and store in session
         $otp = strval(mt_rand(100000, 999999));
         $_SESSION['otp'] = $otp;
