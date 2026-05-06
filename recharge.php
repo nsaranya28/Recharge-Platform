@@ -87,7 +87,7 @@ if (isset($_POST['process_recharge'])) {
         <form method="POST">
             <div class="filter-group">
                 <label>Mobile Number</label>
-                <input type="text" name="mobile_number" placeholder="Enter 10 digit number" maxlength="10" required>
+                <input type="tel" name="mobile_number" placeholder="Enter 10 digit number" maxlength="10" pattern="[0-9]{10}" title="Please enter a 10-digit mobile number" required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
             </div>
 
             <div class="filter-group">
@@ -103,16 +103,16 @@ if (isset($_POST['process_recharge'])) {
             <div id="card_fields" style="display: none; border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <div class="filter-group">
                     <label>Card Number</label>
-                    <input type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
+                    <input type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" oninput="this.value = this.value.replace(/[^0-9 ]/g, '');">
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="filter-group">
                         <label>Expiry (MM/YY)</label>
-                        <input type="text" placeholder="MM/YY" maxlength="5">
+                        <input type="text" placeholder="MM/YY" maxlength="5" oninput="this.value = this.value.replace(/[^0-9\/]/g, '');">
                     </div>
                     <div class="filter-group">
                         <label>CVV</label>
-                        <input type="password" placeholder="***" maxlength="3">
+                        <input type="password" placeholder="***" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                     </div>
                 </div>
             </div>
