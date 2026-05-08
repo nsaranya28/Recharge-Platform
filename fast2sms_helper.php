@@ -10,7 +10,7 @@
  */
 function sendFast2SMS($mobile, $amount, $operator) {
     // REPLACE THIS WITH YOUR ACTUAL FAST2SMS API KEY
-    $apiKey = "YOUR_FAST2SMS_API_KEY_HERE";
+    $apiKey = "3slq********************";
     
     $message = "Success! Your recharge of Rs.$amount for $operator is successful. Thank you for using Smart Recharge.";
     
