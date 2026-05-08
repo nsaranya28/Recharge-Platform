@@ -19,57 +19,55 @@ use Twilio\Rest\Client;
  */
 function sendRechargeSuccessSMS($mobileNumber, $amount, $operator) {
     // --- Twilio Configuration ---
-    // Replace these with your actual Twilio Account SID, Auth Token, and Twilio Phone Number.
-    // You can find these in your Twilio Console (https://console.twilio.com/).
-    $account_sid   = 'YOUR_TWILIO_ACCOUNT_SID';
-    $auth_token    = 'YOUR_TWILIO_AUTH_TOKEN';
-    $twilio_number = 'YOUR_TWILIO_PHONE_NUMBER'; // e.g., +12345678901
+    $account_sid   = getenv('TWILIO_ACCOUNT_SID');
+    $auth_token    = getenv('TWILIO_AUTH_TOKEN');
+    $twilio_number = getenv('TWILIO_PHONE_NUMBER');
 
     // --- Input Formatting ---
-    // Clean the mobile number by removing any non-numeric characters
     $cleanNumber = preg_replace('/[^0-9]/', '', $mobileNumber);
-    
-    // Basic validation: ensure it's exactly 10 digits (for India)
     if (strlen($cleanNumber) != 10) {
-        return [
-            'success' => false,
-            'message' => 'Invalid mobile number. Please provide a 10-digit number.'
-        ];
+        return ['success'=>false,'message'=>'Invalid mobile number'];
     }
+    $to = '+91' . $cleanNumber;
 
-    // Format mobile number with country code (+91 for India)
-    $formattedNumber = '+91' . $cleanNumber;
+    // Simple message
+    $msg = "Recharge successful Rs.{$amount} for {$operator}. Thank you!";
 
-    // --- Message Construction ---
-    // Format: "Recharge successful Rs.{amount} for {operator}. Thank you!"
-    $messageBody = "Recharge successful Rs.{$amount} for {$operator}. Thank you!";
-
-    // --- Sending SMS ---
     try {
-        // Initialize the Twilio client using your credentials
         $client = new Client($account_sid, $auth_token);
+        $client->messages->create($to, ['from'=>$twilio_number,'body'=>$msg]);
+        return ['success'=>true,'message'=>'SMS sent'];
+    } catch (\Exception $e) {
+        return ['success'=>false,'message'=>$e->getMessage()];
+    }
+}
 
-        // Attempt to send the message
-        $message = $client->messages->create(
-            $formattedNumber, // The recipient's phone number
-            [
-                'from' => $twilio_number, // Your Twilio phone number
-                'body' => $messageBody    // The text message
-            ]
-        );
-
-        // If we reach here, the API call was successful
-        return [
-            'success' => true,
-            'message' => 'SMS sent successfully. Message SID: ' . $message->sid
-        ];
-
-    } catch (Exception $e) {
-        // Catch any errors from the Twilio API or network issues
-        return [
-            'success' => false,
-            'message' => 'Failed to send SMS. Error: ' . $e->getMessage()
-        ];
+/**
+ * Sends a detailed recharge SMS with plan info.
+ *
+ * @param string $mobileNumber 10‑digit number.
+ * @param float $amount
+ * @param string $operator
+ * @param float $dataPerDay  (GB per day)
+ * @param int $validityDays
+ * @return array
+ */
+function sendDetailedRechargeSMS($mobileNumber, $amount, $operator, $dataPerDay, $validityDays) {
+    $account_sid   = getenv('TWILIO_ACCOUNT_SID');
+    $auth_token    = getenv('TWILIO_AUTH_TOKEN');
+    $twilio_number = getenv('TWILIO_PHONE_NUMBER');
+    $cleanNumber = preg_replace('/[^0-9]/', '', $mobileNumber);
+    if (strlen($cleanNumber) != 10) {
+        return ['success'=>false,'message'=>'Invalid mobile number'];
+    }
+    $to = '+91' . $cleanNumber;
+    $msg = "Successfully recharged ₹{$amount} for {$operator}. Your plan of {$dataPerDay}GB/Day for {$validityDays} Days is now active. Thank you for using Smart Recharge!";
+    try {
+        $client = new Client($account_sid, $auth_token);
+        $client->messages->create($to, ['from'=>$twilio_number,'body'=>$msg]);
+        return ['success'=>true,'message'=>'SMS sent'];
+    } catch (\Exception $e) {
+        return ['success'=>false,'message'=>$e->getMessage()];
     }
 }
 
