@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS sims (
 
 
 -- Insert Sample Data
-INSERT INTO plans (operator, price, validity, data_per_day, is_best_plan) VALUES
+INSERT IGNORE INTO plans (operator, price, validity, data_per_day, is_best_plan) VALUES
 ('Jio', 239.00, 28, 1.5, TRUE),
 ('Jio', 299.00, 28, 2.0, FALSE),
 ('Jio', 666.00, 84, 1.5, FALSE),
@@ -48,7 +48,7 @@ INSERT INTO plans (operator, price, validity, data_per_day, is_best_plan) VALUES
 ('Airtel', 19.00, 1, 1.0, FALSE);
 
 -- Insert sample sims
-INSERT INTO sims (operator, sim_type, price, validity, data_per_day, is_best_sim) VALUES
+INSERT IGNORE INTO sims (operator, sim_type, price, validity, data_per_day, is_best_sim) VALUES
 ('Jio', 'Prepaid', 199.00, 28, 1.5, FALSE),
 ('Airtel', 'Prepaid', 219.00, 28, 1.5, FALSE),
 ('VI', 'Prepaid', 229.00, 28, 1.5, FALSE),
@@ -104,5 +104,5 @@ CREATE TABLE IF NOT EXISTS reminders (
 );
 
 -- Insert a sample user
-INSERT INTO users (name, email, mobile, whatsapp) VALUES 
+INSERT IGNORE INTO users (name, email, mobile, whatsapp) VALUES 
 ('Test User', 'test@example.com', '1234567890', '1234567890');

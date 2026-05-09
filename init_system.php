@@ -11,7 +11,14 @@ try {
     foreach ($queries as $query) {
         $query = trim($query);
         if (!empty($query)) {
-            $pdo->exec($query);
+            try {
+                $pdo->exec($query);
+            } catch (PDOException $e) {
+                // Ignore duplicate or existing errors, but log them for debugging
+                if ($e->getCode() != '23000') {
+                    echo "Notice: " . $e->getMessage() . "<br>";
+                }
+            }
         }
     }
     
