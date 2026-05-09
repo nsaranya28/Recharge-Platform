@@ -44,8 +44,8 @@ INSERT INTO plans (operator, price, validity, data_per_day, is_best_plan) VALUES
 ('Jio', 899.00, 180, 3.0, FALSE),
 ('Airtel', 999.00, 180, 3.5, FALSE),
 ('VI', 1099.00, 180, 4.0, TRUE),
-('Jio', 99.00, 1, 0.5, FALSE),
-('Airtel', 99.00, 1, 0.5, FALSE);
+('Jio', 15.00, 1, 1.0, FALSE),
+('Airtel', 19.00, 1, 1.0, FALSE);
 
 -- Insert sample sims
 INSERT INTO sims (operator, sim_type, price, validity, data_per_day, is_best_sim) VALUES

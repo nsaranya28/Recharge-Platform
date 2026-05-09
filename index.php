@@ -28,6 +28,12 @@ if ($min_validity) {
     $params[] = $min_validity;
 }
 
+$max_validity = $_GET['max_validity'] ?? '';
+if ($max_validity) {
+    $sql .= " AND validity <= ?";
+    $params[] = $max_validity;
+}
+
 if ($min_data) {
     $sql .= " AND data_per_day >= ?";
     $params[] = $min_data;
@@ -133,6 +139,13 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                         <option value="price_desc" <?php if($sort == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
                         <option value="validity_desc" <?php if($sort == 'validity_desc') echo 'selected'; ?>>Longest Validity</option>
                     </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Quick Filters</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="index.php?max_validity=1" class="btn-reset" style="text-align: left; margin-top: 0; padding: 0.5rem; background: #f0fdf4; color: #166534; border-radius: 6px; border: 1px solid #bbf7d0;">⚡ 1-Day Data Boosters</a>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-apply">Apply Filters</button>
