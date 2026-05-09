@@ -4,8 +4,11 @@
 // Ensure that you have installed the Twilio SDK via Composer before using this file.
 // Run this command in your project directory: composer require twilio/sdk
 
-// Load the Composer autoloader
-require_once __DIR__ . '/vendor/autoload.php';
+$sdk_loaded = false;
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+    $sdk_loaded = true;
+}
 
 use Twilio\Rest\Client;
 
@@ -18,6 +21,9 @@ use Twilio\Rest\Client;
  * @return array An array containing 'success' (boolean) and 'message' (string).
  */
 function sendRechargeSuccessSMS($mobileNumber, $amount, $operator) {
+    global $sdk_loaded;
+    if (!$sdk_loaded) return ['success' => false, 'message' => 'Twilio SDK missing'];
+
     // --- Twilio Configuration ---
     $account_sid   = getenv('TWILIO_ACCOUNT_SID');
     $auth_token    = getenv('TWILIO_AUTH_TOKEN');
@@ -53,6 +59,9 @@ function sendRechargeSuccessSMS($mobileNumber, $amount, $operator) {
  * @return array
  */
 function sendDetailedRechargeSMS($mobileNumber, $amount, $operator, $dataPerDay, $validityDays) {
+    global $sdk_loaded;
+    if (!$sdk_loaded) return ['success' => false, 'message' => 'Twilio SDK missing'];
+
     $account_sid   = getenv('TWILIO_ACCOUNT_SID');
     $auth_token    = getenv('TWILIO_AUTH_TOKEN');
     $twilio_number = getenv('TWILIO_PHONE_NUMBER');
