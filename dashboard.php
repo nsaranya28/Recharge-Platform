@@ -64,6 +64,16 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$user_id]);
 $notifications = $stmt->fetchAll();
+
+// Fetch AI Recommendations
+require_once 'recommendation_helper.php';
+$ai_recs = getAIRecommendations($pdo, $user_id);
+
+// Handle Chatbot Query
+$bot_response = '';
+if (isset($_POST['chat_query'])) {
+    $bot_response = getChatbotResponse($_POST['chat_query'], $pdo);
+}
 ?>
 
 <!DOCTYPE html>
@@ -228,35 +238,49 @@ $notifications = $stmt->fetchAll();
             </div>
 
             <aside>
-                <div class="stat-card">
-                    <h3>Recent Alerts</h3>
-                    <div style="margin-top: 1rem;">
-                        <?php if (empty($notifications)): ?>
-                            <p style="color: var(--text-muted); font-size: 0.875rem;">No recent notifications.</p>
-                        <?php else: ?>
-                            <?php foreach ($notifications as $n): ?>
-                                <div style="padding: 0.75rem 0; border-bottom: 1px solid #eee;">
-                                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
-                                        <span><?php echo $n['type']; ?></span>
-                                        <span><?php echo date('H:i', strtotime($n['sent_at'])); ?></span>
-                                    </div>
-                                    <p style="font-size: 0.875rem; margin-top: 0.25rem;"><?php echo htmlspecialchars($n['message']); ?></p>
+                <!-- AI Recommendations -->
+                <div class="stat-card" style="background: linear-gradient(135deg, #7c3aed, #db2777); color: white;">
+                    <h3 style="color: white;">AI Recommendations 🤖</h3>
+                    <p style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.9;">Personalized for your usage patterns:</p>
+                    
+                    <?php foreach ($ai_recs as $type => $plan): ?>
+                        <?php if ($plan): ?>
+                            <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-top: 1rem; border: 1px solid rgba(255,255,255,0.2);">
+                                <span style="font-size: 0.7rem; text-transform: uppercase; font-weight: bold; opacity: 0.8;"><?php echo str_replace('_', ' ', $type); ?></span>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
+                                    <strong><?php echo $plan['operator']; ?> ₹<?php echo $plan['price']; ?></strong>
+                                    <a href="recharge.php?id=<?php echo $plan['id']; ?>" style="color: white; font-size: 0.8rem; background: rgba(0,0,0,0.2); padding: 0.25rem 0.5rem; border-radius: 4px; text-decoration: none;">Choose</a>
                                 </div>
-                            <?php endforeach; ?>
+                                <p style="font-size: 0.75rem; margin-top: 0.25rem;">
+                                    <?php echo $plan['data_per_day']; ?>GB/Day | <?php echo $plan['validity']; ?> Days
+                                    <?php if ($plan['ott_subscription']): ?>
+                                        <br><span style="color: #fbbf24;">★ Includes <?php echo $plan['ott_subscription']; ?></span>
+                                    <?php endif; ?>
+                                </p>
+                            </div>
                         <?php endif; ?>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
 
-                <div class="stat-card" style="background: linear-gradient(135deg, #7c3aed, #db2777); color: white;">
-                    <h3 style="color: white;">AI Suggestion 🤖</h3>
-                    <p style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.9;">Based on your usage, we recommend:</p>
-                    <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-top: 1rem; border: 1px solid rgba(255,255,255,0.2);">
-                        <strong>Airtel ₹299 Plan</strong>
-                        <p style="font-size: 0.75rem;">1.5GB/Day + Unlimited Calls</p>
-                        <a href="index.php?operator=Airtel" style="color: white; font-weight: bold; display: block; margin-top: 0.5rem;">View Details →</a>
+                <!-- AI Chatbot -->
+                <div class="stat-card">
+                    <h3>Recharge Assistant 💬</h3>
+                    <div id="chat-history" style="height: 150px; overflow-y: auto; font-size: 0.875rem; margin-bottom: 1rem; padding: 0.5rem; background: #f9fafb; border-radius: 8px; border: 1px solid #eee;">
+                        <?php if ($bot_response): ?>
+                            <div style="margin-bottom: 0.5rem; color: var(--primary);"><strong>You:</strong> <?php echo htmlspecialchars($_POST['chat_query']); ?></div>
+                            <div style="color: var(--text-main);"><strong>Bot:</strong> <?php echo $bot_response; ?></div>
+                        <?php else: ?>
+                            <div style="color: var(--text-muted);">Hi! Ask me for the 'cheapest plan' or 'OTT offers'.</div>
+                        <?php endif; ?>
                     </div>
+                    <form method="POST" action="dashboard.php#chat-history">
+                        <input type="text" name="chat_query" placeholder="Ask me something..." style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; outline: none;">
+                        <button type="submit" class="btn-apply" style="margin-top: 0.5rem; font-size: 0.875rem; padding: 0.5rem;">Send</button>
+                    </form>
                 </div>
-            </aside>
+
+                <div class="stat-card">
+                    <h3>Recent Alerts</h3>
         </div>
     </div>
 
