@@ -92,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complete Your Recharge</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         .checkout-container {
             max-width: 500px;
@@ -144,25 +145,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="hidden" name="process_recharge" value="1">
 <div class="filter-group">
     <label>Mobile Number</label>
-    <input type="tel" name="mobile_number" placeholder="Enter 10 digit number" maxlength="10" pattern="[0-9]{10}" title="Please enter a 10-digit mobile number" required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+    <div style="display: flex; gap: 0.5rem;">
+        <input type="tel" id="mobile_number" name="mobile_number" placeholder="Enter 10 digit number" maxlength="10" pattern="[0-9]{10}" title="Please enter a 10-digit mobile number" required oninput="this.value = this.value.replace(/[^0-9]/g, '');" style="flex: 1;">
+        <button type="button" onclick="toggleScanner()" class="btn-apply" style="width: auto; padding: 0.5rem 1rem; background: #6366f1;">📷 Scan</button>
+    </div>
 </div>
 
-            <div class="filter-group">
-                <label>Payment Method</label>
-                <select id="payment_method" name="payment_method" onchange="togglePaymentFields()" required>
-                    <option value="upi">UPI (GPay / PhonePe / Paytm)</option>
-                    <option value="card">Credit / Debit Card</option>
-                    <option value="netbanking">Net Banking</option>
-                </select>
-            </div>
+<!-- QR Scanner Container -->
+<div id="qr-reader" style="display: none; margin-bottom: 1.5rem; border: 2px dashed var(--primary); border-radius: 8px; overflow: hidden;"></div>
 
-            <!-- UPI Details Section -->
-            <div id="upi_fields" style="display: block; border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <div class="filter-group">
-                    <label>Enter UPI ID</label>
-                    <input type="text" name="upi_id" placeholder="example@ybl, mobile@paytm">
-                </div>
-            </div>
+<div class="filter-group">
+    <label>Payment Method</label>
+    <select id="payment_method" name="payment_method" onchange="togglePaymentFields()" required>
+        <option value="upi">UPI (GPay / PhonePe / Paytm)</option>
+        <option value="qr">Scan UPI QR Code</option>
+        <option value="card">Credit / Debit Card</option>
+        <option value="netbanking">Net Banking</option>
+    </select>
+</div>
+
+<!-- UPI QR Details Section -->
+<div id="qr_payment_fields" style="display: none; border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; background: #f9fafb;">
+    <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1rem;">Scan this QR with any UPI app to pay ₹<?php echo $plan['price']; ?></p>
+    <div id="payment-qr" style="display: flex; justify-content: center; margin-bottom: 1rem;">
+        <!-- QR Code will be injected here -->
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=smartrecharge@upi%26pn=SmartRecharge%26am=<?php echo $plan['price']; ?>%26cu=INR%26tn=Recharge" alt="UPI QR">
+    </div>
+    <p style="font-size: 0.75rem; color: #10b981;">✔️ Secure encrypted payment</p>
+</div>
+
+<!-- UPI ID Section -->
+<div id="upi_fields" style="display: block; border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+    <div class="filter-group">
+        <label>Enter UPI ID</label>
+        <input type="text" name="upi_id" placeholder="example@ybl, mobile@paytm">
+    </div>
+</div>
 
             <!-- Card Details Section -->
             <div id="card_fields" style="display: none; border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
@@ -213,10 +231,12 @@ function togglePaymentFields() {
     const cardFields = document.getElementById('card_fields');
     const bankFields = document.getElementById('bank_fields');
     const upiFields = document.getElementById('upi_fields');
+    const qrFields = document.getElementById('qr_payment_fields');
 
     if (cardFields) cardFields.style.display = 'none';
     if (bankFields) bankFields.style.display = 'none';
     if (upiFields) upiFields.style.display = 'none';
+    if (qrFields) qrFields.style.display = 'none';
 
     if (method === 'card' && cardFields) {
         cardFields.style.display = 'block';
@@ -224,7 +244,37 @@ function togglePaymentFields() {
         bankFields.style.display = 'block';
     } else if (method === 'upi' && upiFields) {
         upiFields.style.display = 'block';
+    } else if (method === 'qr' && qrFields) {
+        qrFields.style.display = 'block';
     }
+}
+
+let html5QrCode;
+
+function toggleScanner() {
+    const scannerDiv = document.getElementById('qr-reader');
+    if (scannerDiv.style.display === 'none') {
+        scannerDiv.style.display = 'block';
+        startScanner();
+    } else {
+        scannerDiv.style.display = 'none';
+        if (html5QrCode) html5QrCode.stop();
+    }
+}
+
+function startScanner() {
+    html5QrCode = new Html5Qrcode("qr-reader");
+    const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+        // Look for a 10 digit number in the QR
+        const match = decodedText.match(/[0-9]{10}/);
+        if (match) {
+            document.getElementById('mobile_number').value = match[0];
+            toggleScanner(); // Close scanner
+            alert("Mobile Number Scanned: " + match[0]);
+        }
+    };
+    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
 }
 
 // Ensure the correct fields are shown on page load

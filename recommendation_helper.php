@@ -9,7 +9,7 @@ function getAIRecommendations($pdo, $user_id) {
         SELECT 
             AVG(amount) as avg_spend, 
             AVG(validity) as avg_validity,
-            MAX(operator) as preferred_operator,
+            MAX(rh.operator) as preferred_operator,
             COUNT(*) as recharge_count
         FROM recharge_history rh
         JOIN plans p ON rh.plan_id = p.id
