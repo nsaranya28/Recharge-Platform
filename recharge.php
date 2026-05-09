@@ -30,13 +30,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $operator = $plan['operator'];
         $validity = $plan['validity'];
         $data = $plan['data_per_day'];
+        $user_id = $_SESSION['user_id'] ?? 1; // Default to test user
 
-        // Send SMS via Fast2SMS
-        require_once 'fast2sms_helper.php';
-        sendFast2SMS($mobile, $price, $operator);
+        // Calculate Expiry Date
+        $expiry_date = date('Y-m-d', strtotime("+$validity days"));
 
-        header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price) . "&op=" . urlencode($operator) . "&val=" . urlencode($validity) . "&dat=" . urlencode($data));
-        exit();
+        try {
+            $pdo->beginTransaction();
+
+            // 1. Insert into recharge_history
+            $stmt = $pdo->prepare("INSERT INTO recharge_history (user_id, mobile_number, operator, plan_id, amount, expiry_date) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$user_id, $mobile, $operator, $plan_id, $price, $expiry_date]);
+            $recharge_id = $pdo->lastInsertId();
+
+            // 2. Schedule Reminders (3 days, 1 day, and same day)
+            $reminders = [
+                ['3_days_before', date('Y-m-d', strtotime("$expiry_date -3 days"))],
+                ['1_day_before', date('Y-m-d', strtotime("$expiry_date -1 days"))],
+                ['on_expiry', $expiry_date]
+            ];
+
+            $stmt = $pdo->prepare("INSERT INTO reminders (recharge_id, reminder_type, scheduled_date) VALUES (?, ?, ?)");
+            foreach ($reminders as $r) {
+                // Only schedule if the date is in the future
+                if ($r[1] >= date('Y-m-d')) {
+                    $stmt->execute([$recharge_id, $r[0], $r[1]]);
+                }
+            }
+
+            $pdo->commit();
+
+            // Send SMS via Fast2SMS (Original logic)
+            require_once 'fast2sms_helper.php';
+            sendFast2SMS($mobile, $price, $operator);
+
+            header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price) . "&op=" . urlencode($operator) . "&val=" . urlencode($validity) . "&dat=" . urlencode($data));
+            exit();
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $error = "Database Error: " . $e->getMessage();
+        }
     } else {
         $error = "Please enter a valid 10-digit mobile number.";
     }

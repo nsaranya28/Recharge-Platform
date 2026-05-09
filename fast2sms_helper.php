@@ -8,11 +8,11 @@
  * @param string $operator Mobile operator name
  * @return array           API response
  */
-function sendFast2SMS($mobile, $amount, $operator) {
+function sendFast2SMS($mobile, $amount, $operator, $customMessage = null) {
     // REPLACE THIS WITH YOUR ACTUAL FAST2SMS API KEY
     $apiKey = "3slq********************";
     
-    $message = "Success! Your recharge of Rs.$amount for $operator is successful. Thank you for using Smart Recharge.";
+    $message = $customMessage ?: "Success! Your recharge of Rs.$amount for $operator is successful. Thank you for using Smart Recharge.";
     
     $fields = array(
         "route" => "q",
