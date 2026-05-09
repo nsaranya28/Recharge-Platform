@@ -89,6 +89,10 @@ function sendDetailedRechargeSMS($mobileNumber, $amount, $operator, $dataPerDay,
  * @return array
  */
 function sendWhatsAppNotification($mobileNumber, $message, $mediaUrl = null) {
+    global $sdk_loaded;
+    if (!$sdk_loaded) {
+        return ['success' => false, 'message' => 'Twilio SDK missing'];
+    }
     $account_sid   = getenv('TWILIO_ACCOUNT_SID') ?: "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
     $auth_token    = getenv('TWILIO_AUTH_TOKEN') ?: "your_auth_token";
     $from_whatsapp = getenv('TWILIO_WHATSAPP_NUMBER') ?: "whatsapp:+14155238886"; // Default Twilio Sandbox number
