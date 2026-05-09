@@ -60,11 +60,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $pdo->commit();
 
-            // Send SMS via Fast2SMS (Original logic)
+            // --- Send Notifications ---
+            $userName = $_SESSION['user_name'] ?? 'Customer';
+            $txId = strtoupper(substr(md5(time() . $mobile), 0, 10)); // Generate Transaction ID
+
+            // 1. Send SMS via Fast2SMS
             require_once 'fast2sms_helper.php';
             sendFast2SMS($mobile, $price, $operator);
 
-            header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price) . "&op=" . urlencode($operator) . "&val=" . urlencode($validity) . "&dat=" . urlencode($data));
+            // 2. Send WhatsApp Notification via Twilio
+            require_once 'twilio_helper.php';
+            sendWhatsAppRechargeSuccess($mobile, $userName, $operator, $price, $validity, $txId);
+
+            header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price) . "&op=" . urlencode($operator) . "&val=" . urlencode($validity) . "&dat=" . urlencode($data) . "&txid=" . urlencode($txId));
             exit();
         } catch (Exception $e) {
             $pdo->rollBack();

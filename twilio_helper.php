@@ -71,24 +71,80 @@ function sendDetailedRechargeSMS($mobileNumber, $amount, $operator, $dataPerDay,
     }
 }
 
-// ============================================================================
-// Example Usage / Function Call (You can comment this out in production)
-// ============================================================================
+/**
+ * Sends a WhatsApp notification using Twilio WhatsApp API.
+ *
+ * @param string $mobileNumber The recipient's 10-digit mobile number.
+ * @param string $message The message body.
+ * @param string|null $mediaUrl Optional URL to a PDF or Image.
+ * @return array
+ */
+function sendWhatsAppNotification($mobileNumber, $message, $mediaUrl = null) {
+    $account_sid   = getenv('TWILIO_ACCOUNT_SID') ?: "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+    $auth_token    = getenv('TWILIO_AUTH_TOKEN') ?: "your_auth_token";
+    $from_whatsapp = getenv('TWILIO_WHATSAPP_NUMBER') ?: "whatsapp:+14155238886"; // Default Twilio Sandbox number
 
-/*
-// Example variables coming from a successful recharge flow
-$userMobile = "9876543210"; // Replace with your actual verified Twilio number for testing
-$rechargeAmount = 499;
-$telecomOperator = "Airtel";
+    $cleanNumber = preg_replace('/[^0-9]/', '', $mobileNumber);
+    if (strlen($cleanNumber) != 10) {
+        return ['success' => false, 'message' => 'Invalid mobile number'];
+    }
+    $to = 'whatsapp:+91' . $cleanNumber;
 
-// Call the function
-$response = sendRechargeSuccessSMS($userMobile, $rechargeAmount, $telecomOperator);
+    try {
+        $client = new Client($account_sid, $auth_token);
+        $options = ['from' => $from_whatsapp, 'body' => $message];
+        
+        if ($mediaUrl) {
+            $options['mediaUrl'] = [$mediaUrl];
+        }
 
-// Handle the response
-if ($response['success']) {
-    echo "<b>Success:</b> " . $response['message'];
-} else {
-    echo "<b>Error:</b> " . $response['message'];
+        $client->messages->create($to, $options);
+        return ['success' => true, 'message' => 'WhatsApp message sent'];
+    } catch (\Exception $e) {
+        return ['success' => false, 'message' => $e->getMessage()];
+    }
 }
-*/
+
+/**
+ * Sends a stylized WhatsApp recharge success notification.
+ */
+function sendWhatsAppRechargeSuccess($mobile, $userName, $operator, $amount, $validity, $txId) {
+    $dateTime = date('d-M-Y H:i:s');
+    $msg = "━━━━━━━━━━━━━━━━\n";
+    $msg .= "📲 *RECHARGE SUCCESSFUL*\n";
+    $msg .= "━━━━━━━━━━━━━━━━\n\n";
+    $msg .= "Hello *{$userName}*,\n\n";
+    $msg .= "Your recharge is successful! 🎉\n\n";
+    $msg .= "🔹 *Operator:* {$operator}\n";
+    $msg .= "🔹 *Amount:* ₹{$amount}\n";
+    $msg .= "🔹 *Validity:* {$validity} Days\n";
+    $msg .= "🔹 *TXN ID:* {$txId}\n";
+    $msg .= "🔹 *Date:* {$dateTime}\n\n";
+    $msg .= "━━━━━━━━━━━━━━━━\n";
+    $msg .= "Thank you for using Smart Recharge! ✨";
+
+    return sendWhatsAppNotification($mobile, $msg);
+}
+
+/**
+ * Sends a WhatsApp reminder notification.
+ */
+function sendWhatsAppReminder($mobile, $userName, $operator, $expiryDate, $daysLeft) {
+    $msg = "━━━━━━━━━━━━━━━━\n";
+    $msg .= "🔔 *RECHARGE REMINDER*\n";
+    $msg .= "━━━━━━━━━━━━━━━━\n\n";
+    $msg .= "Hello *{$userName}*,\n\n";
+    
+    if ($daysLeft > 0) {
+        $msg .= "Your *{$operator}* plan expires in *{$daysLeft} days* ({$expiryDate}). ⏳\n\n";
+    } else {
+        $msg .= "Your *{$operator}* plan *expires today*! ⚠️\n\n";
+    }
+    
+    $msg .= "Recharge now to enjoy uninterrupted services. ⚡\n\n";
+    $msg .= "━━━━━━━━━━━━━━━━\n";
+    $msg .= "Click here to recharge: http://localhost/recharge";
+
+    return sendWhatsAppNotification($mobile, $msg);
+}
 ?>

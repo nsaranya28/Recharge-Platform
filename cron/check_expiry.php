@@ -36,7 +36,11 @@ try {
         }
 
         // --- Send SMS ---
-        // sendFast2SMS($rem['mobile_number'], 0, $rem['operator'], $message); // Adjusted helper needed
+        // sendFast2SMS($rem['mobile_number'], 0, $rem['operator'], $message);
+        
+        // --- Send WhatsApp ---
+        require_once __DIR__ . '/../twilio_helper.php';
+        sendWhatsAppReminder($rem['mobile_number'], $rem['name'], $rem['operator'], $rem['expiry_date'], $days);
         
         // --- Mock Sending (For Log) ---
         $logStmt = $pdo->prepare("INSERT INTO notifications (user_id, type, message, status) VALUES (?, ?, ?, ?)");
