@@ -9,6 +9,31 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
+$success_msg = '';
+$error_msg = '';
+
+// Handle Settings Update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $mobile = trim($_POST['mobile'] ?? '');
+    $whatsapp = trim($_POST['whatsapp'] ?? '');
+    $language = $_POST['language'] ?? 'English';
+
+    try {
+        $updateStmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, mobile = ?, whatsapp = ?, language = ? WHERE id = ?");
+        $updateStmt->execute([$name, $email, $mobile, $whatsapp, $language, $user_id]);
+        $_SESSION['user_name'] = $name;
+        $success_msg = "Settings updated successfully!";
+    } catch (PDOException $e) {
+        $error_msg = "Update failed: " . $e->getMessage();
+    }
+}
+
+// Fetch User Data
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->execute([$user_id]);
+$user_data = $stmt->fetch();
 
 // Fetch Recharge History with Plan details
 $stmt = $pdo->prepare("
@@ -94,11 +119,30 @@ $notifications = $stmt->fetchAll();
             font-weight: 500;
             padding: 0.5rem 1rem;
             border-radius: 8px;
+            cursor: pointer;
         }
         .nav-tabs a.active {
             background: var(--primary);
             color: white;
         }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .settings-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .settings-form .filter-group { margin-bottom: 0; }
+        .full-width { grid-column: 1 / -1; }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .alert-success { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+        .alert-error { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
     </style>
 </head>
 <body>
@@ -109,105 +153,181 @@ $notifications = $stmt->fetchAll();
         <p>Manage your recharges and set automated reminders</p>
     </header>
 
+    <?php if ($success_msg): ?>
+        <div class="alert alert-success"><?php echo $success_msg; ?></div>
+    <?php endif; ?>
+    <?php if ($error_msg): ?>
+        <div class="alert alert-error"><?php echo $error_msg; ?></div>
+    <?php endif; ?>
+
     <div class="nav-tabs">
         <a href="index.php">Plan Browser</a>
-        <a href="dashboard.php" class="active">Dashboard</a>
-        <a href="#settings">Notification Settings</a>
+        <a onclick="showTab('dashboard')" id="tab-btn-dashboard" class="active">Dashboard</a>
+        <a onclick="showTab('settings')" id="tab-btn-settings">Notification Settings</a>
     </div>
 
-    <div class="dashboard-grid">
-        <!-- Main Content: History & Upcoming -->
-        <div class="main-content">
-            <div class="stat-card">
-                <h3>Upcoming Expiries</h3>
-                <div style="margin-top: 1.5rem;">
-                    <?php if (empty($upcoming)): ?>
-                        <p style="color: var(--text-muted);">No active recharges found.</p>
-                    <?php else: ?>
-                        <?php foreach ($upcoming as $item): ?>
-                            <div class="reminder-card">
-                                <div>
-                                    <strong style="display: block; font-size: 1.1rem;"><?php echo $item['operator']; ?> - <?php echo $item['mobile_number']; ?></strong>
-                                    <span style="color: var(--text-muted); font-size: 0.875rem;">Expiry: <?php echo date('d M, Y', strtotime($item['expiry_date'])); ?></span>
+    <!-- Dashboard Tab -->
+    <div id="dashboard-tab" class="tab-content active">
+        <div class="dashboard-grid">
+            <div class="main-content">
+                <div class="stat-card">
+                    <h3>Upcoming Expiries</h3>
+                    <div style="margin-top: 1.5rem;">
+                        <?php if (empty($upcoming)): ?>
+                            <p style="color: var(--text-muted);">No active recharges found.</p>
+                        <?php else: ?>
+                            <?php foreach ($upcoming as $item): ?>
+                                <div class="reminder-card">
+                                    <div>
+                                        <strong style="display: block; font-size: 1.1rem;"><?php echo $item['operator']; ?> - <?php echo $item['mobile_number']; ?></strong>
+                                        <span style="color: var(--text-muted); font-size: 0.875rem;">Expiry: <?php echo date('d M, Y', strtotime($item['expiry_date'])); ?></span>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <?php 
+                                            $class = 'status-safe';
+                                            if ($item['days_left'] <= 1) $class = 'status-urgent';
+                                            elseif ($item['days_left'] <= 3) $class = 'status-warning';
+                                        ?>
+                                        <span class="status-badge <?php echo $class; ?>">
+                                            <?php echo $item['days_left']; ?> Days Left
+                                        </span>
+                                        <a href="recharge.php?id=<?php echo $item['plan_id']; ?>" style="display: block; margin-top: 0.5rem; font-size: 0.875rem; color: var(--primary);">Renew Now</a>
+                                    </div>
                                 </div>
-                                <div style="text-align: right;">
-                                    <?php 
-                                        $class = 'status-safe';
-                                        if ($item['days_left'] <= 1) $class = 'status-urgent';
-                                        elseif ($item['days_left'] <= 3) $class = 'status-warning';
-                                    ?>
-                                    <span class="status-badge <?php echo $class; ?>">
-                                        <?php echo $item['days_left']; ?> Days Left
-                                    </span>
-                                    <a href="recharge.php?id=<?php echo $item['plan_id']; ?>" style="display: block; margin-top: 0.5rem; font-size: 0.875rem; color: var(--primary);">Renew Now</a>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <h3>Recharge History</h3>
-                <table class="comparison-table" style="margin-top: 1rem;">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Mobile</th>
-                            <th>Plan</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($history as $row): ?>
-                            <tr>
-                                <td><?php echo date('d M', strtotime($row['recharge_date'])); ?></td>
-                                <td><?php echo $row['mobile_number']; ?></td>
-                                <td>₹<?php echo $row['amount']; ?></td>
-                                <td><span class="status-badge status-safe"><?php echo $row['status']; ?></span></td>
-                            </tr>
-                        <?php endforeach; ?>
-                        <?php if (empty($history)): ?>
-                            <tr><td colspan="4" style="text-align: center; padding: 2rem;">No history found.</td></tr>
+                            <?php endforeach; ?>
                         <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                    </div>
+                </div>
 
-        <!-- Sidebar: Notifications & AI Suggestions -->
-        <aside>
-            <div class="stat-card">
-                <h3>Recent Alerts</h3>
-                <div style="margin-top: 1rem;">
-                    <?php if (empty($notifications)): ?>
-                        <p style="color: var(--text-muted); font-size: 0.875rem;">No recent notifications.</p>
-                    <?php else: ?>
-                        <?php foreach ($notifications as $n): ?>
-                            <div style="padding: 0.75rem 0; border-bottom: 1px solid #eee;">
-                                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
-                                    <span><?php echo $n['type']; ?></span>
-                                    <span><?php echo date('H:i', strtotime($n['sent_at'])); ?></span>
+                <div class="stat-card">
+                    <h3>Recharge History</h3>
+                    <table class="comparison-table" style="margin-top: 1rem;">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Mobile</th>
+                                <th>Plan</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($history as $row): ?>
+                                <tr>
+                                    <td><?php echo date('d M', strtotime($row['recharge_date'])); ?></td>
+                                    <td><?php echo $row['mobile_number']; ?></td>
+                                    <td>₹<?php echo $row['amount']; ?></td>
+                                    <td><span class="status-badge status-safe"><?php echo $row['status']; ?></span></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if (empty($history)): ?>
+                                <tr><td colspan="4" style="text-align: center; padding: 2rem;">No history found.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <aside>
+                <div class="stat-card">
+                    <h3>Recent Alerts</h3>
+                    <div style="margin-top: 1rem;">
+                        <?php if (empty($notifications)): ?>
+                            <p style="color: var(--text-muted); font-size: 0.875rem;">No recent notifications.</p>
+                        <?php else: ?>
+                            <?php foreach ($notifications as $n): ?>
+                                <div style="padding: 0.75rem 0; border-bottom: 1px solid #eee;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+                                        <span><?php echo $n['type']; ?></span>
+                                        <span><?php echo date('H:i', strtotime($n['sent_at'])); ?></span>
+                                    </div>
+                                    <p style="font-size: 0.875rem; margin-top: 0.25rem;"><?php echo htmlspecialchars($n['message']); ?></p>
                                 </div>
-                                <p style="font-size: 0.875rem; margin-top: 0.25rem;"><?php echo htmlspecialchars($n['message']); ?></p>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
-            </div>
 
-            <div class="stat-card" style="background: linear-gradient(135deg, #7c3aed, #db2777); color: white;">
-                <h3 style="color: white;">AI Suggestion 🤖</h3>
-                <p style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.9;">Based on your usage, we recommend:</p>
-                <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-top: 1rem; border: 1px solid rgba(255,255,255,0.2);">
-                    <strong>Airtel ₹299 Plan</strong>
-                    <p style="font-size: 0.75rem;">1.5GB/Day + Unlimited Calls</p>
-                    <a href="index.php?operator=Airtel" style="color: white; font-weight: bold; display: block; margin-top: 0.5rem;">View Details →</a>
+                <div class="stat-card" style="background: linear-gradient(135deg, #7c3aed, #db2777); color: white;">
+                    <h3 style="color: white;">AI Suggestion 🤖</h3>
+                    <p style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.9;">Based on your usage, we recommend:</p>
+                    <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-top: 1rem; border: 1px solid rgba(255,255,255,0.2);">
+                        <strong>Airtel ₹299 Plan</strong>
+                        <p style="font-size: 0.75rem;">1.5GB/Day + Unlimited Calls</p>
+                        <a href="index.php?operator=Airtel" style="color: white; font-weight: bold; display: block; margin-top: 0.5rem;">View Details →</a>
+                    </div>
                 </div>
-            </div>
-        </aside>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="settings-tab" class="tab-content">
+        <div class="stat-card">
+            <h3>Notification & Profile Settings</h3>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Customize how and where you receive recharge reminders.</p>
+            
+            <form method="POST" class="settings-form">
+                <div class="filter-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" value="<?php echo htmlspecialchars($user_data['name']); ?>" required>
+                </div>
+                <div class="filter-group">
+                    <label>Email Address (For Alerts)</label>
+                    <input type="email" name="email" value="<?php echo htmlspecialchars($user_data['email']); ?>" required>
+                </div>
+                <div class="filter-group">
+                    <label>Mobile Number (For SMS)</label>
+                    <input type="text" name="mobile" value="<?php echo htmlspecialchars($user_data['mobile']); ?>" required>
+                </div>
+                <div class="filter-group">
+                    <label>WhatsApp Number</label>
+                    <input type="text" name="whatsapp" value="<?php echo htmlspecialchars($user_data['whatsapp']); ?>">
+                </div>
+                <div class="filter-group">
+                    <label>Notification Language</label>
+                    <select name="language">
+                        <option value="English" <?php echo ($user_data['language'] == 'English') ? 'selected' : ''; ?>>English</option>
+                        <option value="Tamil" <?php echo ($user_data['language'] == 'Tamil') ? 'selected' : ''; ?>>Tamil (தமிழ்)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Preferred Alert Timing</label>
+                    <select disabled>
+                        <option>Morning (9:00 AM)</option>
+                        <option>Evening (6:00 PM)</option>
+                    </select>
+                </div>
+                
+                <div class="full-width" style="margin-top: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <button type="submit" name="update_settings" class="btn-apply" style="width: auto; padding: 0.75rem 2rem;">Save Changes</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+<script>
+function showTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.nav-tabs a').forEach(btn => btn.classList.remove('active'));
+    
+    // Show selected tab
+    document.getElementById(tabName + '-tab').classList.add('active');
+    document.getElementById('tab-btn-' + tabName).classList.add('active');
+    
+    // Update URL hash without jumping
+    history.pushState(null, null, '#' + tabName);
+}
+
+// Handle initial load from hash
+window.addEventListener('load', () => {
+    const hash = window.location.hash.substring(1);
+    if (hash === 'settings') {
+        showTab('settings');
+    }
+});
+</script>
 
 </body>
 </html>
