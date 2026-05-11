@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS sims (
 
 -- Insert Sample Data
 INSERT IGNORE INTO plans (operator, price, validity, data_per_day, is_best_plan, category, ott_subscription) VALUES
-('Jio', 239.00, 28, 1.5, TRUE, 'Unlimited', NULL);
+('Jio', 15.00, 1, 1.0, FALSE, 'Budget', NULL),
+('Airtel', 15.00, 1, 1.0, FALSE, 'Budget', NULL);
 
 -- Insert sample sims
 INSERT IGNORE INTO sims (operator, sim_type, price, validity, data_per_day, is_best_sim) VALUES
