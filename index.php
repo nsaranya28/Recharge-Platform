@@ -86,8 +86,16 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                 <li><a href="recharge.php">Recharge</a></li>
                 <li><a href="contact.php">Contact</a></li>
             </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
         </div>
     </nav>
+    <script>
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+    </script>
 
 <div class="container">
     <header>
