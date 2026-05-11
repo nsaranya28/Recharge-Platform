@@ -31,23 +31,7 @@ CREATE TABLE IF NOT EXISTS sims (
 
 -- Insert Sample Data
 INSERT IGNORE INTO plans (operator, price, validity, data_per_day, is_best_plan, category, ott_subscription) VALUES
-('Jio', 239.00, 28, 1.5, TRUE, 'Unlimited', NULL),
-('Jio', 299.00, 28, 2.0, FALSE, 'Unlimited', 'JioCinema'),
-('Jio', 666.00, 84, 1.5, FALSE, 'Long Validity', NULL),
-('Jio', 749.00, 90, 2.0, FALSE, 'Long Validity', 'Disney+ Hotstar'),
-('Airtel', 265.00, 28, 1.0, FALSE, 'Budget', NULL),
-('Airtel', 299.00, 28, 1.5, TRUE, 'Unlimited', 'Amazon Prime'),
-('Airtel', 719.00, 84, 1.5, FALSE, 'Long Validity', NULL),
-('Airtel', 839.00, 84, 2.0, FALSE, 'Long Validity', 'Disney+ Hotstar'),
-('VI', 269.00, 28, 1.0, FALSE, 'Budget', NULL),
-('VI', 299.00, 28, 1.5, FALSE, 'Unlimited', 'ZEE5'),
-('VI', 479.00, 56, 1.5, TRUE, 'Unlimited', NULL),
-('VI', 719.00, 84, 1.5, FALSE, 'Long Validity', NULL),
--- Additional plans
-('Jio', 899.00, 180, 3.0, FALSE, 'Long Validity', 'Netflix'),
-('Airtel', 999.00, 180, 3.5, FALSE, 'Long Validity', 'Amazon Prime'),
-('VI', 1099.00, 180, 4.0, TRUE, 'Long Validity', 'Disney+ Hotstar'),
-('Jio', 15.00, 1, 1.0, FALSE, 'Budget', NULL);
+('Jio', 239.00, 28, 1.5, TRUE, 'Unlimited', NULL);
 
 -- Insert sample sims
 INSERT IGNORE INTO sims (operator, sim_type, price, validity, data_per_day, is_best_sim) VALUES
