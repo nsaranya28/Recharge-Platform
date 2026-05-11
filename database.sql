@@ -68,6 +68,9 @@ CREATE TABLE IF NOT EXISTS recharge_history (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
     FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE SET NULL
 );
+-- Ensure no duplicate recharges for the same mobile and plan
+CREATE UNIQUE INDEX uniq_recharge ON recharge_history (mobile_number, plan_id);
+TRUNCATE TABLE recharge_history;
 
 -- Create notifications table
 CREATE TABLE IF NOT EXISTS notifications (
