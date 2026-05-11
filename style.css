@@ -26,6 +26,7 @@ body {
     background-color: var(--bg-color);
     color: var(--text-main);
     line-height: 1.6;
+    padding-top: 60px; /* offset for fixed navbar */
 }
 
 .container {
@@ -39,6 +40,12 @@ body {
     background: var(--primary);
     padding: 0.5rem 0;
     box-shadow: var(--shadow);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
 }
 .nav-container {
     max-width: 1200px;
