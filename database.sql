@@ -47,8 +47,7 @@ INSERT IGNORE INTO plans (operator, price, validity, data_per_day, is_best_plan,
 ('Jio', 899.00, 180, 3.0, FALSE, 'Long Validity', 'Netflix'),
 ('Airtel', 999.00, 180, 3.5, FALSE, 'Long Validity', 'Amazon Prime'),
 ('VI', 1099.00, 180, 4.0, TRUE, 'Long Validity', 'Disney+ Hotstar'),
-('Jio', 15.00, 1, 1.0, FALSE, 'Budget', NULL),
-('Airtel', 19.00, 1, 1.0, FALSE, 'Budget', NULL);
+('Jio', 15.00, 1, 1.0, FALSE, 'Budget', NULL);
 
 -- Insert sample sims
 INSERT IGNORE INTO sims (operator, sim_type, price, validity, data_per_day, is_best_sim) VALUES
