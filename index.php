@@ -77,6 +77,17 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.php" class="nav-logo">Recharge</a>
+            <ul class="nav-menu">
+                <li><a href="index.php">Home</a></li>
+                <li><a href="dashboard.php">Dashboard</a></li>
+                <li><a href="recharge.php">Recharge</a></li>
+                <li><a href="contact.php">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
 
 <div class="container">
     <header>
