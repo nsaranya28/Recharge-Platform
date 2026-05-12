@@ -155,13 +155,9 @@ if (isset($_POST['chat_query'])) {
         .alert-error { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
     </style>
 </head>
-<body>
+<?php include 'header.php'; ?>
 
 <div class="container">
-    <header>
-        <h1>Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</h1>
-        <p>Manage your recharges and set automated reminders</p>
-    </header>
 
     <?php if ($success_msg): ?>
         <div class="alert alert-success"><?php echo $success_msg; ?></div>

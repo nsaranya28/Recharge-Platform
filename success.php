@@ -60,7 +60,7 @@
         }
     </style>
 </head>
-<body>
+<?php include 'header.php'; ?>
 
 <div class="container">
     <div class="success-card">

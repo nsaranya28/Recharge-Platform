@@ -121,6 +121,14 @@
 <?php include 'header.php'; ?>
 
 <div class="container">
+    <?php
+    $success = false;
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Simulate form processing
+        $success = true;
+    }
+    ?>
+
     <div class="contact-wrapper">
         <div class="contact-info">
             <h2>Get in Touch</h2>
@@ -151,27 +159,45 @@
             </div>
         </div>
 
-        <div class="contact-form">
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" placeholder="Enter your name">
-            </div>
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" placeholder="Enter your email">
-            </div>
-            <div class="form-group">
-                <label for="subject">Subject</label>
-                <input type="text" id="subject" placeholder="What is this about?">
-            </div>
-            <div class="form-group">
-                <label for="message">Message</label>
-                <textarea id="message" rows="5" placeholder="How can we help?"></textarea>
-            </div>
-            <button type="submit" class="btn-apply">Send Message</button>
+        <div class="contact-form-container">
+            <?php if ($success): ?>
+                <div style="background: #f0fdf4; color: #166534; padding: 2rem; border-radius: 16px; text-align: center; border: 1px solid #bbf7d0; margin-bottom: 2rem; animation: slideIn 0.5s ease-out;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                    <h3 style="margin-bottom: 0.5rem;">Message Sent!</h3>
+                    <p>Thank you for reaching out. We'll get back to you shortly.</p>
+                    <a href="contact.php" class="btn-apply" style="display: inline-block; width: auto; margin-top: 1rem; text-decoration: none;">Send Another</a>
+                </div>
+            <?php else: ?>
+                <form action="contact.php" method="POST" class="contact-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" placeholder="What is this about?" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" placeholder="How can we help?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-apply">Send Message</button>
+                </form>
+            <?php endif; ?>
         </div>
     </div>
 </div>
+
+<style>
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>
 
 </body>
 </html>
