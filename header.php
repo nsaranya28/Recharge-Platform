@@ -23,7 +23,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="recharge.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'recharge.php' ? 'active' : ''; ?>">
+                <a href="index.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'recharge.php' ? 'active' : ''; ?>">
                     <span class="nav-icon">💳</span> Recharge
                 </a>
             </li>
