@@ -77,27 +77,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<nav class="navbar">
-    <div class="nav-container">
-        <a href="index.php" class="nav-logo">Recharge</a>
-        <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
-        <ul class="nav-menu">
-            <li class="nav-item"><a href="index.php" class="nav-link">Home</a></li>
-            <li class="nav-item"><a href="dashboard.php" class="nav-link">Dashboard</a></li>
-            <li class="nav-item"><a href="recharge.php" class="nav-link">Recharge</a></li>
-            <li class="nav-item"><a href="contact.php" class="nav-link">Contact</a></li>
-        </ul>
-    </div>
-</nav>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var navToggle = document.querySelector('.nav-toggle');
-        var navMenu = document.querySelector('.nav-menu');
-        navToggle.addEventListener('click', function () {
-            navMenu.classList.toggle('active');
-        });
-    });
-</script>
+<?php include 'header.php'; ?>
 
 <div class="container">
     <header>
