@@ -32,51 +32,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = $plan['data_per_day'];
         $user_id = $_SESSION['user_id'] ?? 1; // Default to test user
 
-        // Calculate Expiry Date
-        $expiry_date = date('Y-m-d', strtotime("+$validity days"));
+        // --- DUPLICATE CHECK ---
+        // Prevent duplicate recharges for the same number and plan within the last 1 minute
+        $checkStmt = $pdo->prepare("SELECT id FROM recharge_history WHERE mobile_number = ? AND plan_id = ? AND recharge_date > (NOW() - INTERVAL 1 MINUTE)");
+        $checkStmt->execute([$mobile, $plan_id]);
+        if ($checkStmt->fetch()) {
+            $error = "Duplicate request detected. Please wait a moment before trying again.";
+        } else {
+            // Calculate Expiry Date
+            $expiry_date = date('Y-m-d', strtotime("+$validity days"));
 
-        try {
-            $pdo->beginTransaction();
+            try {
+                $pdo->beginTransaction();
 
-            // 1. Insert into recharge_history
-            $stmt = $pdo->prepare("INSERT INTO recharge_history (user_id, mobile_number, operator, plan_id, amount, expiry_date) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$user_id, $mobile, $operator, $plan_id, $price, $expiry_date]);
-            $recharge_id = $pdo->lastInsertId();
+                // 1. Insert into recharge_history
+                $stmt = $pdo->prepare("INSERT INTO recharge_history (user_id, mobile_number, operator, plan_id, amount, expiry_date) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$user_id, $mobile, $operator, $plan_id, $price, $expiry_date]);
+                $recharge_id = $pdo->lastInsertId();
 
-            // 2. Schedule Reminders (3 days, 1 day, and same day)
-            $reminders = [
-                ['3_days_before', date('Y-m-d', strtotime("$expiry_date -3 days"))],
-                ['1_day_before', date('Y-m-d', strtotime("$expiry_date -1 days"))],
-                ['on_expiry', $expiry_date]
-            ];
+                // 2. Schedule Reminders (3 days, 1 day, and same day)
+                $reminders = [
+                    ['3_days_before', date('Y-m-d', strtotime("$expiry_date -3 days"))],
+                    ['1_day_before', date('Y-m-d', strtotime("$expiry_date -1 days"))],
+                    ['on_expiry', $expiry_date]
+                ];
 
-            $stmt = $pdo->prepare("INSERT INTO reminders (recharge_id, reminder_type, scheduled_date) VALUES (?, ?, ?)");
-            foreach ($reminders as $r) {
-                // Only schedule if the date is in the future
-                if ($r[1] >= date('Y-m-d')) {
-                    $stmt->execute([$recharge_id, $r[0], $r[1]]);
+                $stmt = $pdo->prepare("INSERT INTO reminders (recharge_id, reminder_type, scheduled_date) VALUES (?, ?, ?)");
+                foreach ($reminders as $r) {
+                    // Only schedule if the date is in the future
+                    if ($r[1] >= date('Y-m-d')) {
+                        $stmt->execute([$recharge_id, $r[0], $r[1]]);
+                    }
                 }
+
+                $pdo->commit();
+
+                // --- Send Notifications (Wrapped in try-catch to avoid breaking success flow) ---
+                $userName = $_SESSION['user_name'] ?? 'Customer';
+                $txId = strtoupper(substr(md5(time() . $mobile), 0, 10)); // Generate Transaction ID
+
+                try {
+                    // 1. Send SMS via Fast2SMS
+                    if (file_exists('fast2sms_helper.php')) {
+                        require_once 'fast2sms_helper.php';
+                        sendFast2SMS($mobile, $price, $operator);
+                    }
+                } catch (Exception $e) {}
+
+                try {
+                    // 2. Send WhatsApp Notification via Twilio
+                    if (file_exists('twilio_helper.php')) {
+                        require_once 'twilio_helper.php';
+                        sendWhatsAppRechargeSuccess($mobile, $userName, $operator, $price, $validity, $txId);
+                    }
+                } catch (Exception $e) {}
+
+                header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price) . "&op=" . urlencode($operator) . "&val=" . urlencode($validity) . "&dat=" . urlencode($data) . "&txid=" . urlencode($txId));
+                exit();
+            } catch (Exception $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                $error = "Database Error: " . $e->getMessage();
             }
-
-            $pdo->commit();
-
-            // --- Send Notifications ---
-            $userName = $_SESSION['user_name'] ?? 'Customer';
-            $txId = strtoupper(substr(md5(time() . $mobile), 0, 10)); // Generate Transaction ID
-
-            // 1. Send SMS via Fast2SMS
-            require_once 'fast2sms_helper.php';
-            sendFast2SMS($mobile, $price, $operator);
-
-            // 2. Send WhatsApp Notification via Twilio
-            require_once 'twilio_helper.php';
-            sendWhatsAppRechargeSuccess($mobile, $userName, $operator, $price, $validity, $txId);
-
-            header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price) . "&op=" . urlencode($operator) . "&val=" . urlencode($validity) . "&dat=" . urlencode($data) . "&txid=" . urlencode($txId));
-            exit();
-        } catch (Exception $e) {
-            $pdo->rollBack();
-            $error = "Database Error: " . $e->getMessage();
         }
     } else {
         $error = "Please enter a valid 10-digit mobile number.";
