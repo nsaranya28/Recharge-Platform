@@ -14,11 +14,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt = $pdo->prepare("SELECT id, name, password FROM users WHERE email = ? OR mobile = ?");
     $stmt->execute([$identifier, $identifier]);
-    $user = $stmt->fetch();
+    $users = $stmt->fetchAll();
 
-    if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
+    $authenticated = false;
+    foreach ($users as $user) {
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $authenticated = true;
+            break;
+        }
+    }
+
+    if ($authenticated) {
         header("Location: dashboard.php");
         exit();
     } else {
