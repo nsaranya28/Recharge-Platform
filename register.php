@@ -18,11 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password !== $confirm_password) {
         $error = "Passwords do not match!";
     } else {
-        // Check if email or mobile already exists
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? OR mobile = ?");
-        $stmt->execute([$email, $mobile]);
+        // Check if mobile already exists (Email is now allowed to be used multiple times)
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE mobile = ?");
+        $stmt->execute([$mobile]);
         if ($stmt->fetch()) {
-            $error = "Email or Mobile number already registered!";
+            $error = "This Mobile number is already registered!";
         } else {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("INSERT INTO users (name, email, mobile, password) VALUES (?, ?, ?, ?)");
