@@ -75,6 +75,79 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobile Recharge Plans Comparison</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* FORCED GRID ARRANGEMENT */
+        .services-container { 
+            padding: 2rem 0; 
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+        }
+        .services-box-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)) !important;
+            gap: 20px !important;
+            background: #ffffff;
+            padding: 2.5rem !important;
+            border-radius: 24px !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+        }
+        .service-box {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            text-decoration: none !important;
+            padding: 10px !important;
+            border-radius: 16px !important;
+            transition: all 0.3s ease !important;
+        }
+        .service-box:hover {
+            background: #f8fafc !important;
+            transform: translateY(-5px) !important;
+        }
+        .service-box-icon {
+            width: 65px !important;
+            height: 65px !important;
+            background: #f1f5f9 !important;
+            border-radius: 20px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 28px !important;
+            margin-bottom: 12px !important;
+            transition: all 0.3s ease !important;
+        }
+        .service-box.active .service-box-icon {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5) !important;
+            color: white !important;
+            box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3) !important;
+        }
+        .service-box-text {
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: #64748b !important;
+            text-align: center !important;
+        }
+        .service-box:hover .service-box-text {
+            color: #7c3aed !important;
+        }
+        @media (max-width: 640px) {
+            .services-box-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                padding: 1.5rem !important;
+                gap: 10px !important;
+            }
+            .service-box-icon {
+                width: 55px !important;
+                height: 55px !important;
+                font-size: 22px !important;
+            }
+            .service-box-text { font-size: 12px !important; }
+        }
+    </style>
 </head>
 <body>
 <?php include 'header.php'; ?>
