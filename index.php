@@ -80,9 +80,48 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
 <?php include 'header.php'; ?>
 
 <div class="container">
-    <header>
-        <h1>Smart Recharge Comparison</h1>
-        <p>Find the best mobile plans from Jio, Airtel, and VI</p>
+    <!-- Service Grid (Freecharge Style) -->
+    <section class="services-section">
+        <h2 style="margin-bottom: 2rem; font-size: 1.5rem; font-weight: 700; color: var(--text-main);">Recharges & Bill Payments</h2>
+        <div class="services-grid">
+            <a href="index.php" class="service-item active">
+                <div class="service-icon">📱</div>
+                <span class="service-label">Mobile Recharge</span>
+            </a>
+            <a href="#" class="service-item">
+                <div class="service-icon">🔌</div>
+                <span class="service-label">Electricity</span>
+            </a>
+            <a href="#" class="service-item">
+                <div class="service-icon">📡</div>
+                <span class="service-label">DTH</span>
+            </a>
+            <a href="#" class="service-item">
+                <div class="service-icon">🚗</div>
+                <span class="service-label">FASTag</span>
+            </a>
+            <a href="#" class="service-item">
+                <div class="service-icon">🔋</div>
+                <span class="service-label">EV Recharge</span>
+            </a>
+            <a href="#" class="service-item">
+                <div class="service-icon">☎️</div>
+                <span class="service-label">Landline</span>
+            </a>
+            <a href="#" class="service-item">
+                <div class="service-icon">🏠</div>
+                <span class="service-label">Municipal Taxes</span>
+            </a>
+            <a href="#" class="service-item">
+                <div class="service-icon">➕</div>
+                <span class="service-label">More</span>
+            </a>
+        </div>
+    </section>
+
+    <header style="margin-top: 4rem;">
+        <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Smart Plan Comparison</h1>
+        <p style="color: var(--text-muted);">Compare and find the best mobile plans instantly</p>
     </header>
 
     <!-- Search Bar -->
