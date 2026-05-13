@@ -30,7 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $operator = $plan['operator'];
         $validity = $plan['validity'];
         $data = $plan['data_per_day'];
-        $user_id = $_SESSION['user_id'] ?? 1; // Default to test user
+        // Check if user is logged in
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: login.php?redirect=" . urlencode($_SERVER['REQUEST_URI']));
+            exit();
+        }
+        $user_id = $_SESSION['user_id'];
 
         // --- DUPLICATE CHECK ---
         // Prevent duplicate recharges for the same number and plan within the last 1 minute

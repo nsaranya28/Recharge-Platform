@@ -9,10 +9,10 @@ if (isset($_GET['logout'])) {
     exit();
 }
 
-// Mock login for demonstration (Defaults to User ID 1)
+// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    $_SESSION['user_id'] = 1;
-    $_SESSION['user_name'] = 'N Saranya';
+    header("Location: login.php");
+    exit();
 }
 
 $user_id = $_SESSION['user_id'];
