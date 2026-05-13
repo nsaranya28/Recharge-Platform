@@ -266,60 +266,65 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             </form>
         </aside>
 
-        <!-- Plans Grid -->
+        <!-- Freecharge Style Plan Selection -->
         <main>
-            <form method="POST" action="index.php#comparison">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h3>Available Plans (<?php echo count($plans); ?>)</h3>
-                    <button type="submit" name="compare" class="btn-apply" style="width: auto; padding: 0.5rem 1.5rem;">Compare Selected</button>
+            <div class="plan-selection-header">
+                <h3>Select Plan</h3>
+                <div class="search-filter-wrapper">
+                    <input type="text" name="search" placeholder="Search for a plan or enter amount" value="<?php echo htmlspecialchars($search); ?>">
                 </div>
+            </div>
 
-                <div class="plans-grid">
-                    <?php if (empty($plans)): ?>
-                        <p style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">No plans found matching your criteria.</p>
-                    <?php else: ?>
-                        <?php foreach ($plans as $plan): ?>
-                            <div class="plan-card <?php echo $plan['is_best_plan'] ? 'best-plan' : ''; ?>">
-                                <?php if ($plan['is_best_plan']): ?>
-                                    <div class="badge-best">BEST VALUE</div>
-                                <?php endif; ?>
-                                
-                                <span class="operator-tag tag-<?php echo strtolower($plan['operator']); ?>">
-                                    <?php echo $plan['operator']; ?>
-                                </span>
-                                
-                                <div class="plan-price">
-                                    ₹<?php echo number_format($plan['price'], 0); ?>
+            <!-- Category Tabs -->
+            <div class="plan-tabs">
+                <a href="index.php" class="tab-item active">RECOMMENDED</a>
+                <a href="index.php?operator=<?php echo $operator; ?>&max_price=500" class="tab-item">POPULAR</a>
+                <a href="index.php?min_data=2" class="tab-item">SMART PHONE</a>
+                <a href="index.php?max_validity=1" class="tab-item">DATA ADD ON</a>
+            </div>
+
+            <div class="plans-list-container">
+                <?php if (empty($plans)): ?>
+                    <p style="text-align: center; padding: 3rem; color: var(--text-muted);">No plans found matching your criteria.</p>
+                <?php else: ?>
+                    <?php foreach ($plans as $plan): ?>
+                        <div class="plan-row-card">
+                            <?php if ($plan['is_best_plan']): ?>
+                                <div class="row-badge">Popular</div>
+                            <?php endif; ?>
+                            
+                            <div class="plan-row-content">
+                                <div class="plan-col price-col">
+                                    <div class="row-price">₹<?php echo number_format($plan['price'], 0); ?></div>
+                                    <div class="row-subtext">Unlimited Calls</div>
                                 </div>
                                 
-                                <div class="plan-details">
-                                    <div class="detail-item">
-                                        <span>Validity</span>
-                                        <span><?php echo $plan['validity']; ?> Days</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span>Data</span>
-                                        <span><?php echo $plan['data_per_day']; ?> GB/Day</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span>Total Data</span>
-                                        <span><?php echo $plan['validity'] * $plan['data_per_day']; ?> GB</span>
-                                    </div>
+                                <div class="plan-col validity-col">
+                                    <div class="row-main-val"><?php echo $plan['validity']; ?> Days</div>
+                                    <div class="row-subtext">Validity</div>
                                 </div>
 
-                                <label class="compare-checkbox">
-                                    <input type="checkbox" name="plan_ids[]" value="<?php echo $plan['id']; ?>">
-                                    Add to Compare
-                                </label>
+                                <div class="plan-col data-col">
+                                    <div class="row-main-val"><?php echo $plan['data_per_day']; ?> GB/day</div>
+                                    <div class="row-subtext">Data</div>
+                                </div>
 
-                                <a href="recharge.php?id=<?php echo $plan['id']; ?>" class="btn-apply" style="display: block; text-align: center; text-decoration: none; margin-top: 1rem; background: var(--primary);">
-                                    Recharge Now
-                                </a>
+                                <div class="plan-col action-col">
+                                    <a href="recharge.php?id=<?php echo $plan['id']; ?>" class="btn-apply-orange">
+                                        APPLY
+                                    </a>
+                                </div>
                             </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-            </form>
+                            
+                            <div class="plan-row-footer">
+                                <div class="cost-badge">Cost per day <span>₹<?php echo number_format($plan['price'] / $plan['validity'], 1); ?></span></div>
+                                <a href="#" class="details-link">Details ⌄</a>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </main>
 
             <!-- Comparison Table -->
             <?php if (!empty($compare_plans)): ?>
