@@ -80,49 +80,49 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
 <?php include 'header.php'; ?>
 
 <div class="container">
-    <!-- Service Grid (Freecharge Style) -->
-    <section class="services-section">
-        <h2 style="margin-bottom: 2rem; font-size: 1.5rem; font-weight: 700; color: var(--text-main);">Recharges & Bill Payments</h2>
-        <div class="services-grid">
-            <a href="index.php" class="service-item active">
-                <div class="service-icon">📱</div>
-                <span class="service-label">Mobile Recharge</span>
+    <!-- Main Service Grid (Freecharge Style) -->
+    <section class="services-container">
+        <h2 class="section-title">Recharges & Bill Payments</h2>
+        <div class="services-box-grid">
+            <a href="index.php" class="service-box active">
+                <div class="service-box-icon">📱</div>
+                <div class="service-box-text">Mobile</div>
             </a>
-            <a href="#" class="service-item">
-                <div class="service-icon">🔌</div>
-                <span class="service-label">Electricity</span>
+            <a href="electricity.php" class="service-box">
+                <div class="service-box-icon">💡</div>
+                <div class="service-box-text">Electricity</div>
             </a>
-            <a href="#" class="service-item">
-                <div class="service-icon">📡</div>
-                <span class="service-label">DTH</span>
+            <a href="#" class="service-box">
+                <div class="service-box-icon">📡</div>
+                <div class="service-box-text">DTH</div>
             </a>
-            <a href="#" class="service-item">
-                <div class="service-icon">🚗</div>
-                <span class="service-label">FASTag</span>
+            <a href="#" class="service-box">
+                <div class="service-box-icon">🚗</div>
+                <div class="service-box-text">FASTag</div>
             </a>
-            <a href="#" class="service-item">
-                <div class="service-icon">🔋</div>
-                <span class="service-label">EV Recharge</span>
+            <a href="#" class="service-box">
+                <div class="service-box-icon">🔋</div>
+                <div class="service-box-text">EV Recharge</div>
             </a>
-            <a href="#" class="service-item">
-                <div class="service-icon">☎️</div>
-                <span class="service-label">Landline</span>
+            <a href="#" class="service-box">
+                <div class="service-box-icon">☎️</div>
+                <div class="service-box-text">Landline</div>
             </a>
-            <a href="#" class="service-item">
-                <div class="service-icon">🏠</div>
-                <span class="service-label">Municipal Taxes</span>
+            <a href="#" class="service-box">
+                <div class="service-box-icon">🏛️</div>
+                <div class="service-box-text">Property Tax</div>
             </a>
-            <a href="#" class="service-item">
-                <div class="service-icon">➕</div>
-                <span class="service-label">More</span>
+            <a href="#" class="service-box">
+                <div class="service-box-icon">➕</div>
+                <div class="service-box-text">More</div>
             </a>
         </div>
     </section>
 
-    <header style="margin-top: 4rem;">
-        <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Smart Plan Comparison</h1>
-        <p style="color: var(--text-muted);">Compare and find the best mobile plans instantly</p>
-    </header>
+    <div class="plan-comparison-header" style="margin-top: 4rem; text-align: center;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary);">Smart Plan Comparison</h1>
+        <p style="color: var(--text-muted); font-size: 1.1rem;">Select your operator and find the perfect plan in seconds</p>
+    </div>
 
     <!-- Search Bar -->
     <div class="search-container">
