@@ -147,6 +147,76 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             }
             .service-box-text { font-size: 12px !important; }
         }
+
+        /* FORCED PLAN ARRANGEMENT */
+        .plan-tabs {
+            display: flex !important;
+            gap: 25px !important;
+            border-bottom: 2px solid #e2e8f0 !important;
+            margin-bottom: 2rem !important;
+            padding-bottom: 10px !important;
+            overflow-x: auto;
+        }
+        .tab-item {
+            text-decoration: none !important;
+            color: #64748b !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            white-space: nowrap;
+        }
+        .tab-item.active {
+            color: #f97316 !important;
+            border-bottom: 3px solid #f97316 !important;
+            padding-bottom: 7px !important;
+        }
+        .plan-row-card {
+            background: #ffffff !important;
+            border-radius: 16px !important;
+            padding: 20px !important;
+            margin-bottom: 15px !important;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05) !important;
+            border: 1px solid #f1f5f9 !important;
+            position: relative;
+        }
+        .plan-row-content {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding-bottom: 15px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+        }
+        .plan-col { flex: 1; }
+        .row-price { font-size: 24px !important; font-weight: 800 !important; color: #1e293b !important; }
+        .row-main-val { font-size: 18px !important; font-weight: 700 !important; color: #1e293b !important; }
+        .row-subtext { font-size: 12px !important; color: #94a3b8 !important; }
+        .btn-apply-orange {
+            background: #f97316 !important;
+            color: white !important;
+            padding: 12px 35px !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+        }
+        .plan-row-footer {
+            display: flex !important;
+            justify-content: space-between !important;
+            padding-top: 10px !important;
+            align-items: center !important;
+        }
+        .cost-badge {
+            background: #f8fafc !important;
+            padding: 5px 15px !important;
+            border-radius: 99px !important;
+            font-size: 12px !important;
+            color: #64748b !important;
+        }
+        .details-link { color: #f97316 !important; font-weight: 600 !important; text-decoration: none !important; font-size: 14px !important; }
+        
+        @media (max-width: 640px) {
+            .plan-row-content { flex-direction: column !important; align-items: flex-start !important; gap: 15px !important; }
+            .btn-apply-orange { width: 100% !important; text-align: center !important; }
+        }
     </style>
 </head>
 <body>
