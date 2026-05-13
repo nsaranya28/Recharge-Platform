@@ -2,6 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+// Handle logout
 ?>
 <nav class="navbar">
     <div class="nav-container">
