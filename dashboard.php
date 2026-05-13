@@ -2,10 +2,17 @@
 require_once 'db.php';
 session_start();
 
-// Mock login for the sample user (id=1)
+// Handle Logout
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header("Location: dashboard.php");
+    exit();
+}
+
+// Mock login for demonstration (Defaults to User ID 1)
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['user_id'] = 1;
-    $_SESSION['user_name'] = 'Test User';
+    $_SESSION['user_name'] = 'N Saranya';
 }
 
 $user_id = $_SESSION['user_id'];
@@ -170,6 +177,7 @@ if (isset($_POST['chat_query'])) {
         <a href="index.php">Plan Browser</a>
         <a onclick="showTab('dashboard')" id="tab-btn-dashboard" class="active">Dashboard</a>
         <a onclick="showTab('settings')" id="tab-btn-settings">Notification Settings</a>
+        <a href="?logout=1" style="margin-left: auto; color: #ef4444; font-weight: 500; text-decoration: none;">Logout</a>
     </div>
 
     <!-- Dashboard Tab -->
@@ -212,7 +220,10 @@ if (isset($_POST['chat_query'])) {
                             <tr>
                                 <th>Date</th>
                                 <th>Mobile</th>
-                                <th>Plan</th>
+                                <th>Amount</th>
+                                <th>Validity</th>
+                                <th>Data/Day</th>
+                                <th>Expiry Date</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -221,7 +232,10 @@ if (isset($_POST['chat_query'])) {
                                 <tr>
                                     <td><?php echo date('d M', strtotime($row['recharge_date'])); ?></td>
                                     <td><?php echo $row['mobile_number']; ?></td>
-                                    <td>₹<?php echo $row['amount']; ?></td>
+                                    <td><strong>₹<?php echo $row['amount']; ?></strong></td>
+                                    <td><?php echo $row['plan_validity']; ?> Days</td>
+                                    <td><?php echo $row['data_per_day']; ?> GB</td>
+                                    <td><span style="color: var(--text-muted);"><?php echo date('d M, Y', strtotime($row['expiry_date'])); ?></span></td>
                                     <td><span class="status-badge status-safe"><?php echo $row['status']; ?></span></td>
                                 </tr>
                             <?php endforeach; ?>
@@ -277,7 +291,22 @@ if (isset($_POST['chat_query'])) {
 
                 <div class="stat-card">
                     <h3>Recent Alerts</h3>
-        </div>
+                    <div style="margin-top: 1rem;">
+                        <?php if (empty($notifications)): ?>
+                            <p style="color: var(--text-muted); font-size: 0.875rem;">No recent alerts sent.</p>
+                        <?php else: ?>
+                            <?php foreach ($notifications as $n): ?>
+                                <div style="padding: 0.75rem; border-bottom: 1px solid #eee; font-size: 0.85rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                        <strong style="color: var(--primary);"><?php echo $n['type']; ?></strong>
+                                        <span style="color: var(--text-muted); font-size: 0.75rem;"><?php echo date('d M, H:i', strtotime($n['sent_at'])); ?></span>
+                                    </div>
+                                    <p style="color: var(--text-main); line-height: 1.4;"><?php echo htmlspecialchars(substr($n['message'], 0, 80)) . '...'; ?></p>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
     </div>
 
     <!-- Settings Tab -->
