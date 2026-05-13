@@ -52,22 +52,51 @@ function getAIRecommendations($pdo, $user_id) {
 function getChatbotResponse($query, $pdo) {
     $query = strtolower($query);
     
+    // 1. Check for "Month" or "28/30 Days"
+    if (strpos($query, 'month') !== false || strpos($query, '28 day') !== false || strpos($query, '30 day') !== false) {
+        $stmt = $pdo->query("SELECT * FROM plans WHERE validity BETWEEN 24 AND 31 ORDER BY price ASC LIMIT 1");
+        $plan = $stmt->fetch();
+        if ($plan) {
+            return "I found a great monthly plan for you! The <strong>{$plan['operator']} ₹{$plan['price']}</strong> pack offers {$plan['data_per_day']}GB/day for {$plan['validity']} days. <a href='recharge.php?id={$plan['id']}' style='color: #7c3aed; font-weight: bold; text-decoration: none;'>Recharge Now →</a>";
+        }
+    }
+
+    // 2. Check for "Data" or "GB"
+    if (strpos($query, 'data') !== false || strpos($query, 'gb') !== false || strpos($query, 'internet') !== false) {
+        $stmt = $pdo->query("SELECT * FROM plans ORDER BY data_per_day DESC LIMIT 1");
+        $plan = $stmt->fetch();
+        return "If you need lots of data, the <strong>{$plan['operator']} ₹{$plan['price']}</strong> plan is best. It gives you <strong>{$plan['data_per_day']}GB per day</strong>! <a href='recharge.php?id={$plan['id']}' style='color: #7c3aed; font-weight: bold; text-decoration: none;'>View Plan →</a>";
+    }
+
+    // 3. Check for "Cheap" or "Budget"
     if (strpos($query, 'cheap') !== false || strpos($query, 'budget') !== false) {
         $stmt = $pdo->query("SELECT * FROM plans ORDER BY price ASC LIMIT 1");
         $plan = $stmt->fetch();
-        return "The cheapest plan available is ₹{$plan['price']} from {$plan['operator']} with {$plan['validity']} day validity.";
+        return "The most budget-friendly plan is <strong>₹{$plan['price']}</strong> from {$plan['operator']} ({$plan['validity']} days). <a href='recharge.php?id={$plan['id']}' style='color: #7c3aed; font-weight: bold; text-decoration: none;'>Get it here →</a>";
     }
     
+    // 4. Check for "OTT" or specific services
     if (strpos($query, 'ott') !== false || strpos($query, 'netflix') !== false || strpos($query, 'hotstar') !== false) {
         $stmt = $pdo->query("SELECT * FROM plans WHERE ott_subscription IS NOT NULL LIMIT 1");
         $plan = $stmt->fetch();
-        return "If you want entertainment, I recommend the {$plan['operator']} ₹{$plan['price']} plan which includes {$plan['ott_subscription']}!";
+        if ($plan) {
+            return "For entertainment, I recommend the <strong>{$plan['operator']} ₹{$plan['price']}</strong> plan. It includes <strong>{$plan['ott_subscription']}</strong>! <a href='recharge.php?id={$plan['id']}' style='color: #7c3aed; font-weight: bold; text-decoration: none;'>Recharge →</a>";
+        }
     }
 
-    if (strpos($query, 'jio') !== false) {
-        return "Jio has some great unlimited plans. Would you like to see plans with 1.5GB or 2GB data per day?";
+    // 5. Operator specific
+    $operators = ['jio', 'airtel', 'vi'];
+    foreach ($operators as $op) {
+        if (strpos($query, $op) !== false) {
+            $stmt = $pdo->prepare("SELECT * FROM plans WHERE operator = ? ORDER BY price ASC LIMIT 1");
+            $stmt->execute([ucfirst($op)]);
+            $plan = $stmt->fetch();
+            if ($plan) {
+                return "Looking for " . ucfirst($op) . "? Their most popular plan is <strong>₹{$plan['price']}</strong> with {$plan['data_per_day']}GB/day. <a href='recharge.php?id={$plan['id']}' style='color: #7c3aed; font-weight: bold; text-decoration: none;'>Select Plan →</a>";
+            }
+        }
     }
 
-    return "I'm your Smart Recharge Assistant! I can help you find budget plans, long-validity packs, or plans with OTT subscriptions. What are you looking for today?";
+    return "I'm your Smart Recharge Assistant! I can help you find <strong>monthly plans</strong>, <strong>data packs</strong>, or <strong>OTT offers</strong>. What are you looking for today?";
 }
 ?>
