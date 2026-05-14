@@ -232,15 +232,15 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                 <div class="service-box-icon">📱</div>
                 <div class="service-box-text">Mobile</div>
             </a>
-            <a href="electricity.php" class="service-box">
+            <a href="billers.php?cat=Electricity" class="service-box">
                 <div class="service-box-icon">💡</div>
                 <div class="service-box-text">Electricity</div>
             </a>
-            <a href="#" class="service-box">
+            <a href="billers.php?cat=DTH" class="service-box">
                 <div class="service-box-icon">📡</div>
                 <div class="service-box-text">DTH</div>
             </a>
-            <a href="#" class="service-box">
+            <a href="billers.php?cat=FASTag" class="service-box">
                 <div class="service-box-icon">🚗</div>
                 <div class="service-box-text">FASTag</div>
             </a>
@@ -248,15 +248,15 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                 <div class="service-box-icon">🔋</div>
                 <div class="service-box-text">EV Recharge</div>
             </a>
-            <a href="#" class="service-box">
+            <a href="billers.php?cat=Landline" class="service-box">
                 <div class="service-box-icon">☎️</div>
                 <div class="service-box-text">Landline</div>
             </a>
-            <a href="#" class="service-box">
+            <a href="billers.php?cat=Gas" class="service-box">
                 <div class="service-box-icon">🏛️</div>
-                <div class="service-box-text">Property Tax</div>
+                <div class="service-box-text">Piped Gas</div>
             </a>
-            <a href="#" class="service-box">
+            <a href="billers.php" class="service-box">
                 <div class="service-box-icon">➕</div>
                 <div class="service-box-text">More</div>
             </a>

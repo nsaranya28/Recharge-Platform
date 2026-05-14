@@ -1,0 +1,266 @@
+:root {
+    --fin-primary: #7c3aed;
+    --fin-primary-light: #a78bfa;
+    --fin-secondary: #db2777;
+    --fin-accent: #f472b6;
+    --fin-bg: #f8fafc;
+    --fin-card-bg: rgba(255, 255, 255, 0.7);
+    --fin-glass-border: rgba(255, 255, 255, 0.4);
+    --fin-shadow: 0 10px 30px -5px rgba(124, 58, 237, 0.1);
+    --fin-radius: 24px;
+    --fin-text: #1e293b;
+    --fin-text-muted: #64748b;
+    --fin-gradient: linear-gradient(135deg, #7c3aed, #db2777);
+}
+
+body.dark-mode {
+    --fin-bg: #0f172a;
+    --fin-card-bg: rgba(30, 41, 59, 0.7);
+    --fin-glass-border: rgba(255, 255, 255, 0.1);
+    --fin-text: #f1f5f9;
+    --fin-text-muted: #94a3b8;
+    --fin-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+}
+
+.billers-body {
+    background-color: var(--fin-bg);
+    color: var(--fin-text);
+    font-family: 'Outfit', sans-serif;
+    transition: all 0.4s ease;
+}
+
+/* Category Filter Tabs */
+.category-tabs {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+    scrollbar-width: none;
+}
+
+.category-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.category-tab {
+    padding: 0.75rem 1.5rem;
+    background: var(--fin-card-bg);
+    border: 1px solid var(--fin-glass-border);
+    border-radius: 100px;
+    white-space: nowrap;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--fin-text-muted);
+}
+
+.category-tab:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--fin-shadow);
+}
+
+.category-tab.active {
+    background: var(--fin-gradient);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.4);
+}
+
+/* Grid Layout */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.service-card {
+    background: var(--fin-card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--fin-glass-border);
+    border-radius: var(--fin-radius);
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--fin-gradient);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+    transform-origin: left;
+}
+
+.service-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(124, 58, 237, 0.2);
+    border-color: var(--fin-primary-light);
+}
+
+.service-card:hover::before {
+    transform: scaleX(1);
+}
+
+.service-card-icon {
+    width: 64px;
+    height: 64px;
+    background: rgba(124, 58, 237, 0.1);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.75rem;
+    color: var(--fin-primary);
+    transition: all 0.3s ease;
+}
+
+.service-card:hover .service-card-icon {
+    background: var(--fin-gradient);
+    color: white;
+    transform: rotate(10deg);
+}
+
+.service-card-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.service-card-count {
+    font-size: 0.75rem;
+    color: var(--fin-text-muted);
+}
+
+/* Service Detail Panel */
+.service-panel {
+    display: none;
+    animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.biller-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.biller-item {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .biller-item {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.biller-item:hover {
+    border-color: var(--fin-primary);
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+}
+
+.biller-logo {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 0.75rem;
+    object-fit: contain;
+}
+
+/* Form Styling */
+.fin-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--fin-glass-border);
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.dark-mode .fin-input {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.fin-input:focus {
+    border-color: var(--fin-primary);
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+}
+
+.fin-btn {
+    background: var(--fin-gradient);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.4);
+}
+
+.fin-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px -5px rgba(124, 58, 237, 0.5);
+}
+
+/* Skeleton Loading */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Floating Button */
+.floating-recharge {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: var(--fin-gradient);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.floating-recharge:hover {
+    transform: scale(1.1) rotate(90deg);
+}
