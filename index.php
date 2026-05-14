@@ -224,6 +224,21 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
 <?php include 'header.php'; ?>
 
 <div class="container">
+    <!-- Tamil Nadu Special Section -->
+    <section class="tn-special-banner mb-5" style="margin-top: 2rem;">
+        <div style="background: linear-gradient(135deg, #8b5cf6, #ec4899); padding: 2rem; border-radius: 24px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 20px 40px -10px rgba(139, 92, 246, 0.4);">
+            <div>
+                <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1rem; display: inline-block;">Localized Services</span>
+                <h2 style="font-weight: 800; font-size: 1.75rem; margin-bottom: 0.5rem;">Tamil Nadu Digital Dashboard</h2>
+                <p style="opacity: 0.9; margin-bottom: 1.5rem;">Pay TANGEDCO, Metro Water & more with localized experience.</p>
+                <a href="tn_services.php" class="btn btn-light rounded-pill px-4 fw-bold" style="color: #8b5cf6;">Explore TN Services</a>
+            </div>
+            <div class="d-none d-md-block" style="font-size: 5rem; opacity: 0.3;">
+                🏙️
+            </div>
+        </div>
+    </section>
+
     <!-- Main Service Grid (Freecharge Style) -->
     <section class="services-container">
         <h2 class="section-title">Recharges & Bill Payments</h2>
