@@ -560,9 +560,23 @@ $user_name = $_SESSION['user_name'] ?? 'Guest User';
                         <div class="battery-level" id="battery-fill"></div>
                     </div>
 
-                    <button class="neon-btn" style="margin-top: 1rem;" onclick="showPaymentOptions()">
+                    <button class="neon-btn" id="pay-now-btn" style="margin-top: 1rem;" onclick="showPaymentOptions()">
                         Pay Now
                     </button>
+
+                    <!-- QR Payment (Moved here) -->
+                    <div id="payment-options" style="display: none; margin-top: 2rem;">
+                        <h3 style="margin-bottom: 1rem; text-align: center;">Scan to Pay</h3>
+                        <div class="qr-section" style="background: white; padding: 1.5rem; border-radius: 16px; color: black; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);">
+                            <div style="width: 150px; height: 150px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: 12px; border: 2px dashed #e2e8f0;">
+                                <i data-lucide="qr-code" size="100" style="color: #1e293b;"></i>
+                            </div>
+                            <p style="font-size: 0.85rem; color: #64748b; text-align: center;">Scan this QR with any UPI App (PhonePe, GPay, Paytm)</p>
+                            <button class="neon-btn" style="margin-top: 1.5rem;" onclick="processPayment()">
+                                Confirm Payment
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -594,18 +608,6 @@ $user_name = $_SESSION['user_name'] ?? 'Guest User';
                             </div>
                             <div style="font-weight: 700; color: #22c55e;">₹ 180</div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- QR Payment (Hidden until Pay Now) -->
-                <div id="payment-options" style="display: none;">
-                    <h3 style="margin-bottom: 1rem;">Scan to Pay</h3>
-                    <div class="qr-section">
-                        <div style="background: #eee; width: 150px; height: 150px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;">
-                            <i data-lucide="qr-code" size="100"></i>
-                        </div>
-                        <p style="font-size: 0.8rem; color: #666;">Scan this QR with any UPI App</p>
-                        <button class="neon-btn" style="margin-top: 1rem;" onclick="processPayment()">Confirm Payment</button>
                     </div>
                 </div>
             </div>
@@ -719,8 +721,14 @@ $user_name = $_SESSION['user_name'] ?? 'Guest User';
         }
 
         function showPaymentOptions() {
+            document.getElementById('pay-now-btn').style.display = 'none';
             document.getElementById('payment-options').style.display = 'block';
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            
+            // Smooth scroll to the payment section
+            document.getElementById('payment-options').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            // Re-render icons if needed
+            lucide.createIcons();
         }
 
         function processPayment() {
