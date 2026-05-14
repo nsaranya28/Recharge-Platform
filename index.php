@@ -244,7 +244,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                 <div class="service-box-icon">🚗</div>
                 <div class="service-box-text">FASTag</div>
             </a>
-            <a href="#" class="service-box">
+            <a href="ev_recharge.php" class="service-box">
                 <div class="service-box-icon">🔋</div>
                 <div class="service-box-text">EV Recharge</div>
             </a>
