@@ -1,17 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary: #7c3aed; /* Vibrant Purple */
-    --primary-hover: #6d28d9;
-    --bg-color: #ffffff; /* White background */
+    --primary: #8b5cf6; /* Vibrant Violet */
+    --primary-hover: #7c3aed;
+    --bg-color: #ffffff;
     --card-bg: #ffffff;
-    --text-main: #1e1b4b; /* Deep indigo/black */
-    --text-muted: #6d6d91;
-    --border-color: #e9e7ff;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --border-color: #f3f4f6;
     --accent-jio: #005eb8;
     --accent-airtel: #e30613;
     --accent-vi: #ffb400;
-    --shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.1), 0 8px 10px -6px rgba(124, 58, 237, 0.05);
+    --shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.1), 0 8px 10px -6px rgba(139, 92, 246, 0.05);
     --radius: 16px;
 }
 
@@ -76,10 +76,10 @@ body {
 
 .logo-icon {
     font-size: 1.5rem;
-    background: linear-gradient(135deg, var(--primary), #ec4899);
+    background: linear-gradient(135deg, var(--primary), #a78bfa);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 4px rgba(124, 58, 237, 0.2));
+    filter: drop-shadow(0 2px 4px rgba(139, 92, 246, 0.2));
 }
 
 .logo-text {
@@ -229,7 +229,7 @@ header {
 header h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    background: linear-gradient(to right, var(--primary), #ec4899);
+    background: linear-gradient(to right, var(--primary), #a78bfa);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 0.5rem;
@@ -516,9 +516,9 @@ header p {
 }
 
 .service-box.active .service-box-icon {
-    background: linear-gradient(135deg, var(--primary), #4f46e5);
+    background: linear-gradient(135deg, var(--primary), #7c3aed);
     color: white;
-    box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.4);
+    box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4);
 }
 
 .service-box-text {

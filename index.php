@@ -75,7 +75,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobile Recharge Plans Comparison</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.1">
     <style>
         /* FORCED GRID ARRANGEMENT */
         .services-container { 
@@ -122,9 +122,9 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             transition: all 0.3s ease !important;
         }
         .service-box.active .service-box-icon {
-            background: linear-gradient(135deg, #7c3aed, #4f46e5) !important;
+            background: linear-gradient(135deg, var(--primary), #a78bfa) !important;
             color: white !important;
-            box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3) !important;
+            box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.3) !important;
         }
         .service-box-text {
             font-size: 14px !important;
@@ -133,7 +133,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             text-align: center !important;
         }
         .service-box:hover .service-box-text {
-            color: #7c3aed !important;
+            color: var(--primary) !important;
         }
         @media (max-width: 640px) {
             .services-box-grid {
@@ -166,8 +166,8 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             white-space: nowrap;
         }
         .tab-item.active {
-            color: #f97316 !important;
-            border-bottom: 3px solid #f97316 !important;
+            color: var(--primary) !important;
+            border-bottom: 3px solid var(--primary) !important;
             padding-bottom: 7px !important;
         }
         .plan-row-card {
@@ -191,7 +191,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
         .row-main-val { font-size: 18px !important; font-weight: 700 !important; color: #1e293b !important; }
         .row-subtext { font-size: 12px !important; color: #94a3b8 !important; }
         .btn-apply-orange {
-            background: #f97316 !important;
+            background: var(--primary) !important;
             color: white !important;
             padding: 12px 35px !important;
             border-radius: 10px !important;
@@ -212,7 +212,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             font-size: 12px !important;
             color: #64748b !important;
         }
-        .details-link { color: #f97316 !important; font-weight: 600 !important; text-decoration: none !important; font-size: 14px !important; }
+        .details-link { color: var(--primary) !important; font-weight: 600 !important; text-decoration: none !important; font-size: 14px !important; }
         
         @media (max-width: 640px) {
             .plan-row-content { flex-direction: column !important; align-items: flex-start !important; gap: 15px !important; }
