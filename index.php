@@ -243,39 +243,11 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
     <section class="services-container">
         <h2 class="section-title">Recharges & Bill Payments</h2>
         <div class="services-box-grid">
-            <a href="index.php" class="service-box active">
-                <div class="service-box-icon">📱</div>
-                <div class="service-box-text">Mobile</div>
-            </a>
-            <a href="billers.php?cat=Electricity" class="service-box">
-                <div class="service-box-icon">💡</div>
-                <div class="service-box-text">Electricity</div>
-            </a>
-            <a href="billers.php?cat=DTH" class="service-box">
-                <div class="service-box-icon">📡</div>
-                <div class="service-box-text">DTH</div>
-            </a>
-            <a href="billers.php?cat=FASTag" class="service-box">
-                <div class="service-box-icon">🚗</div>
-                <div class="service-box-text">FASTag</div>
-            </a>
-            <a href="ev_recharge.php" class="service-box">
-                <div class="service-box-icon">🔋</div>
-                <div class="service-box-text">EV Recharge</div>
-            </a>
-            <a href="billers.php?cat=Landline" class="service-box">
-                <div class="service-box-icon">☎️</div>
-                <div class="service-box-text">Landline</div>
-            </a>
-            <a href="billers.php?cat=Gas" class="service-box">
-                <div class="service-box-icon">🏛️</div>
-                <div class="service-box-text">Piped Gas</div>
-            </a>
-            <a href="billers.php" class="service-box">
-                <div class="service-box-icon">➕</div>
-                <div class="service-box-text">More</div>
-            </a>
-        </div>
+    <a href="index.php" class="service-box active">
+        <div class="service-box-icon">📱</div>
+        <div class="service-box-text">Mobile</div>
+    </a>
+</div>
     </section>
 
     <div class="plan-comparison-header" style="margin-top: 4rem; text-align: center;">
