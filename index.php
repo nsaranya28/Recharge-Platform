@@ -85,7 +85,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
-            color: #1e293b;
+            color: var(--primary);
         }
         .services-box-grid {
             display: grid !important;
