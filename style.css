@@ -3,7 +3,7 @@
 :root {
     --primary: #7c3aed; /* Vibrant Purple */
     --primary-hover: #6d28d9;
-    --bg-color: #f5f3ff; /* Very light purple/white bg */
+    --bg-color: #ffffff; /* White background */
     --card-bg: #ffffff;
     --text-main: #1e1b4b; /* Deep indigo/black */
     --text-muted: #6d6d91;
@@ -468,14 +468,14 @@ header p {
     margin-bottom: 2rem;
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--text-main);
+    color: var(--primary);
 }
 
 .services-box-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 1.5rem;
-    background: white;
+    background: var(--card-bg);
     padding: 2.5rem;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
@@ -568,7 +568,7 @@ header p {
 }
 
 .tab-item.active {
-    color: #f97316;
+    color: var(--primary);
 }
 
 .tab-item.active::after {
@@ -578,7 +578,7 @@ header p {
     left: 0;
     width: 100%;
     height: 3px;
-    background: #f97316;
+    background: var(--primary);
     border-radius: 99px;
 }
 
@@ -638,7 +638,16 @@ header p {
 }
 
 .btn-apply-orange {
-    background: #f97316;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 700;
+    display: inline-block;
+    text-align: center;
+    transition: background 0.2s;
+}
     color: white;
     text-decoration: none;
     padding: 0.75rem 2rem;
@@ -650,7 +659,8 @@ header p {
 }
 
 .btn-apply-orange:hover {
-    background: #ea580c;
+    background: var(--primary-hover);
+}
 }
 
 .plan-row-footer {
