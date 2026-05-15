@@ -226,17 +226,6 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
 <div class="container">
 
 
-    <!-- Main Service Grid (Freecharge Style) -->
-    <section class="services-container">
-        <h2 class="section-title">Recharges & Bill Payments</h2>
-        <div class="services-box-grid">
-    <a href="index.php" class="service-box active">
-        <div class="service-box-icon">📱</div>
-        <div class="service-box-text">Mobile</div>
-    </a>
-</div>
-    </section>
-
     <div class="plan-comparison-header" style="margin-top: 4rem; text-align: center;">
         <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary);">Smart Plan Comparison</h1>
         <p style="color: var(--text-muted); font-size: 1.1rem;">Select your operator and find the perfect plan in seconds</p>
