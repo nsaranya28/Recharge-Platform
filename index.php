@@ -218,6 +218,55 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             .plan-row-content { flex-direction: column !important; align-items: flex-start !important; gap: 15px !important; }
             .btn-apply-orange { width: 100% !important; text-align: center !important; }
         }
+
+        /* NEW: Plan Details Expansion Styles */
+        .plan-details-expand {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #f8fafc;
+            border-radius: 0 0 16px 16px;
+            margin: 0 -20px -20px -20px;
+            border-top: 1px solid #f1f5f9;
+        }
+        .plan-details-expand.active {
+            max-height: 500px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        .details-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .details-label {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .details-val {
+            font-size: 14px;
+            color: #1e293b;
+            font-weight: 700;
+        }
+        .ott-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -352,7 +401,38 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                             
                             <div class="plan-row-footer">
                                 <div class="cost-badge">Cost per day <span>₹<?php echo number_format($plan['price'] / $plan['validity'], 1); ?></span></div>
-                                <a href="#" class="details-link">Details ⌄</a>
+                                <a href="javascript:void(0)" class="details-link" onclick="toggleDetails(this)">Details ⌄</a>
+                            </div>
+
+                            <div class="plan-details-expand">
+                                <div class="details-grid">
+                                    <div class="details-item">
+                                        <span class="details-label">Total Data</span>
+                                        <span class="details-val"><?php echo $plan['data_per_day'] * $plan['validity']; ?> GB</span>
+                                    </div>
+                                    <div class="details-item">
+                                        <span class="details-label">Calls</span>
+                                        <span class="details-val">Truly Unlimited</span>
+                                    </div>
+                                    <div class="details-item">
+                                        <span class="details-label">SMS</span>
+                                        <span class="details-val">100 SMS/day</span>
+                                    </div>
+                                    <div class="details-item">
+                                        <span class="details-label">Category</span>
+                                        <span class="details-val"><?php echo $plan['category']; ?></span>
+                                    </div>
+                                </div>
+                                <?php if ($plan['ott_subscription']): ?>
+                                    <div class="ott-badge">
+                                        🎁 Includes <?php echo $plan['ott_subscription']; ?>
+                                    </div>
+                                <?php endif; ?>
+                                <div style="margin-top: 15px; font-size: 13px; color: #64748b; line-height: 1.5;">
+                                    * This plan is available for <?php echo $plan['operator']; ?> customers in all circles. 
+                                    High speed data of <?php echo $plan['data_per_day']; ?>GB/day available. 
+                                    Post quota speed reduces to 64Kbps.
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -408,5 +488,28 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
     </div>
 </div>
 
+<script>
+    function toggleDetails(btn) {
+        const card = btn.closest('.plan-row-card');
+        const expand = card.querySelector('.plan-details-expand');
+        const isActive = expand.classList.contains('active');
+        
+        // Close all others
+        document.querySelectorAll('.plan-details-expand').forEach(el => {
+            el.classList.remove('active');
+        });
+        document.querySelectorAll('.details-link').forEach(el => {
+            el.innerHTML = 'Details ⌄';
+        });
+
+        if (!isActive) {
+            expand.classList.add('active');
+            btn.innerHTML = 'Close ⌃';
+        } else {
+            expand.classList.remove('active');
+            btn.innerHTML = 'Details ⌄';
+        }
+    }
+</script>
 </body>
 </html>
