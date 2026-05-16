@@ -553,6 +553,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
     </div>
 </div>
 
+<script>
     function toggleFilterMenu() {
         document.getElementById('filters-menu').classList.toggle('active');
     }
