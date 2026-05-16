@@ -324,6 +324,18 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             align-items: center;
             margin-bottom: 2rem;
         }
+
+        /* Operator Badges */
+        .operator-badge {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .operator-badge.jio { background: #e0f2fe; color: #0369a1; }
+        .operator-badge.airtel { background: #fee2e2; color: #b91c1c; }
+        .operator-badge.vi { background: #fef9c3; color: #a16207; }
     </style>
 </head>
 <body>
@@ -429,6 +441,9 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                             
                             <div class="plan-row-content">
                                 <div class="plan-col price-col">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                                        <span class="operator-badge <?php echo strtolower($plan['operator']); ?>"><?php echo $plan['operator']; ?></span>
+                                    </div>
                                     <div class="row-price">₹<?php echo number_format($plan['price'], 0); ?></div>
                                     <div class="row-subtext">Unlimited Calls</div>
                                 </div>
@@ -544,7 +559,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
 
     // Close menu when clicking outside
     window.onclick = function(event) {
-        if (!event.target.matches('.filter-btn-toggle') && !event.target.closest('.filters-menu')) {
+        if (!event.target.closest('.filter-btn-toggle') && !event.target.closest('.filters-menu')) {
             var dropdowns = document.getElementsByClassName("filters-menu");
             for (var i = 0; i < dropdowns.length; i++) {
                 var openDropdown = dropdowns[i];
