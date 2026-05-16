@@ -337,26 +337,20 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
         <p style="color: var(--text-muted); font-size: 1.1rem;">Select your operator and find the perfect plan in seconds</p>
     </div>
 
-    <!-- Search Bar -->
-    <div class="search-container">
-        <form method="GET" action="index.php" class="search-input-wrapper">
-            <input type="text" name="search" placeholder="Search by operator or price..." value="<?php echo htmlspecialchars($search); ?>">
-            <!-- Keep filters when searching -->
-            <input type="hidden" name="operator" value="<?php echo htmlspecialchars($operator); ?>">
-            <input type="hidden" name="max_price" value="<?php echo htmlspecialchars($max_price); ?>">
-            <input type="hidden" name="min_validity" value="<?php echo htmlspecialchars($min_validity); ?>">
-            <input type="hidden" name="min_data" value="<?php echo htmlspecialchars($min_data); ?>">
-        </form>
-    </div>
 
     <div class="main-layout">
         <main>
             <div class="plan-selection-header">
                 <h3>Select Plan</h3>
                 <div style="display: flex; gap: 15px; align-items: center;">
-                    <div class="search-filter-wrapper">
+                    <form method="GET" action="index.php" class="search-filter-wrapper">
                         <input type="text" name="search" placeholder="Search plans..." value="<?php echo htmlspecialchars($search); ?>" onchange="this.form.submit()">
-                    </div>
+                        <input type="hidden" name="operator" value="<?php echo htmlspecialchars($operator); ?>">
+                        <input type="hidden" name="max_price" value="<?php echo htmlspecialchars($max_price); ?>">
+                        <input type="hidden" name="min_validity" value="<?php echo htmlspecialchars($min_validity); ?>">
+                        <input type="hidden" name="min_data" value="<?php echo htmlspecialchars($min_data); ?>">
+                        <input type="hidden" name="sort" value="<?php echo htmlspecialchars($sort); ?>">
+                    </form>
                     
                     <div class="filters-dropdown">
                         <button type="button" class="filter-btn-toggle" onclick="toggleFilterMenu()">
@@ -365,6 +359,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                         
                         <div class="filters-menu" id="filters-menu">
                             <form method="GET" action="index.php">
+                                <input type="hidden" name="search" value="<?php echo htmlspecialchars($search); ?>">
                                 <h4 style="margin-bottom: 1.5rem; color: #1e293b;">Refine Results</h4>
                                 <div class="filter-group">
                                     <label>Operator</label>
