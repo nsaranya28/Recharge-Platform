@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS plans (
     category ENUM('Budget', 'Unlimited', 'Long Validity', 'OTT Bundled') DEFAULT 'Unlimited',
     ott_subscription VARCHAR(100) DEFAULT NULL,
     cost_per_day DECIMAL(10, 2) GENERATED ALWAYS AS (price / validity) STORED,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_plan (operator, price, validity, data_per_day)
 );
 
 -- Create sims table
