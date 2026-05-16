@@ -79,7 +79,7 @@
             </div>
             <div style="display: flex; justify-content: space-between;">
                 <span>Transaction ID:</span>
-                <span style="font-family: monospace;"><?php echo strtoupper(bin2hex(random_bytes(6))); ?></span>
+                <span style="font-family: monospace;"><?php echo htmlspecialchars($_GET['txid'] ?? 'N/A'); ?></span>
             </div>
         </div>
 
@@ -89,10 +89,20 @@
         $val = htmlspecialchars($_GET['val'] ?? '');
         $dat = htmlspecialchars($_GET['dat'] ?? '');
         $price = htmlspecialchars($_GET['price'] ?? '');
+        $sms_status = $_GET['sms_status'] ?? 'pending';
         ?>
         
-        <div class="sms-message">
-            <span class="sms-label">SMS Sent to +91 <?php echo $mobile; ?></span>
+        <div class="sms-message" style="<?php echo ($sms_status == 'sent') ? 'border-left-color: #10b981;' : (($sms_status == 'failed' || $sms_status == 'error') ? 'border-left-color: #ef4444;' : ''); ?>">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="sms-label">SMS SENT TO +91 <?php echo $mobile; ?></span>
+                <?php if ($sms_status == 'sent'): ?>
+                    <span style="color: #10b981; font-size: 0.8rem; font-weight: 700;">✅ SENT</span>
+                <?php elseif ($sms_status == 'failed'): ?>
+                    <span style="color: #ef4444; font-size: 0.8rem; font-weight: 700;">❌ FAILED (Check Balance/Key)</span>
+                <?php elseif ($sms_status == 'error'): ?>
+                    <span style="color: #ef4444; font-size: 0.8rem; font-weight: 700;">⚠️ API ERROR</span>
+                <?php endif; ?>
+            </div>
             <p>
                 "Successfully recharged ₹<?php echo $price; ?> for <strong><?php echo $op; ?></strong>. 
                 Your plan of <strong><?php echo $dat; ?>GB/Day</strong> for <strong><?php echo $val; ?> Days</strong> is now active. 

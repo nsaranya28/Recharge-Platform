@@ -75,14 +75,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // --- Send Notifications (Wrapped in try-catch to avoid breaking success flow) ---
                 $userName = $_SESSION['user_name'] ?? 'Customer';
                 $txId = strtoupper(substr(md5(time() . $mobile), 0, 10)); // Generate Transaction ID
+                $smsStatus = 'pending';
 
                 try {
                     // 1. Send SMS via Fast2SMS
                     if (file_exists('fast2sms_helper.php')) {
                         require_once 'fast2sms_helper.php';
-                        sendFast2SMS($mobile, $price, $operator);
+                        $smsResponse = sendFast2SMS($mobile, $price, $operator);
+                        if (isset($smsResponse['return']) && $smsResponse['return'] === true) {
+                            $smsStatus = 'sent';
+                        } else {
+                            $smsStatus = 'failed';
+                        }
                     }
-                } catch (Exception $e) {}
+                } catch (Exception $e) {
+                    $smsStatus = 'error';
+                }
 
                 try {
                     // 2. Send WhatsApp Notification via Twilio
@@ -92,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 } catch (Exception $e) {}
 
-                header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price) . "&op=" . urlencode($operator) . "&val=" . urlencode($validity) . "&dat=" . urlencode($data) . "&txid=" . urlencode($txId));
+                header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price) . "&op=" . urlencode($operator) . "&val=" . urlencode($validity) . "&dat=" . urlencode($data) . "&txid=" . urlencode($txId) . "&sms_status=" . $smsStatus);
                 exit();
             } catch (Exception $e) {
                 if ($pdo->inTransaction()) {
