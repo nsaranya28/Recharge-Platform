@@ -267,6 +267,63 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             font-weight: 600;
             margin-top: 5px;
         }
+
+        /* Layout */
+        .main-layout {
+            display: block;
+            width: 100%;
+        }
+
+        /* Sidebar Filters - MOVED TO DROPDOWN */
+        .filters-dropdown {
+            position: relative;
+        }
+        .filters-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            width: 320px;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            z-index: 1000;
+            border: 1px solid #f1f5f9;
+            margin-top: 10px;
+        }
+        .filters-menu.active {
+            display: block;
+            animation: slideInDown 0.3s ease-out;
+        }
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .filter-btn-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            border: 1.5px solid #e2e8f0;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn-toggle:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #f5f3ff;
+        }
+        .plan-selection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -293,68 +350,67 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
     </div>
 
     <div class="main-layout">
-        <!-- Sidebar Filters -->
-        <aside class="filters-card">
-            <h2>Filters</h2>
-            <form method="GET" action="index.php">
-                <div class="filter-group">
-                    <label>Operator</label>
-                    <select name="operator">
-                        <option value="">All Operators</option>
-                        <option value="Jio" <?php if($operator == 'Jio') echo 'selected'; ?>>Jio</option>
-                        <option value="Airtel" <?php if($operator == 'Airtel') echo 'selected'; ?>>Airtel</option>
-                        <option value="VI" <?php if($operator == 'VI') echo 'selected'; ?>>VI</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label>Max Price (₹)</label>
-                    <input type="number" name="max_price" placeholder="e.g. 500" value="<?php echo htmlspecialchars($max_price); ?>">
-                </div>
-
-                <div class="filter-group">
-                    <label>Min Validity (Days)</label>
-                    <input type="number" name="min_validity" placeholder="e.g. 28" value="<?php echo htmlspecialchars($min_validity); ?>">
-                </div>
-
-                <div class="filter-group">
-                    <label>Min Data per Day (GB)</label>
-                    <select name="min_data">
-                        <option value="">Any</option>
-                        <option value="1" <?php if($min_data == '1') echo 'selected'; ?>>1 GB+</option>
-                        <option value="1.5" <?php if($min_data == '1.5') echo 'selected'; ?>>1.5 GB+</option>
-                        <option value="2" <?php if($min_data == '2') echo 'selected'; ?>>2 GB+</option>
-                        <option value="3" <?php if($min_data == '3') echo 'selected'; ?>>3 GB+</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label>Sort By</label>
-                    <select name="sort">
-                        <option value="price_asc" <?php if($sort == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
-                        <option value="price_desc" <?php if($sort == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
-                        <option value="validity_desc" <?php if($sort == 'validity_desc') echo 'selected'; ?>>Longest Validity</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label>Quick Filters</label>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <a href="index.php?max_validity=1" class="btn-reset" style="text-align: left; margin-top: 0; padding: 0.5rem; background: #f0fdf4; color: #166534; border-radius: 6px; border: 1px solid #bbf7d0;">⚡ 1-Day Data Boosters</a>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-apply">Apply Filters</button>
-                <a href="index.php" class="btn-reset">Reset All</a>
-            </form>
-        </aside>
-
-        <!-- Freecharge Style Plan Selection -->
         <main>
             <div class="plan-selection-header">
                 <h3>Select Plan</h3>
-                <div class="search-filter-wrapper">
-                    <input type="text" name="search" placeholder="Search for a plan or enter amount" value="<?php echo htmlspecialchars($search); ?>">
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <div class="search-filter-wrapper">
+                        <input type="text" name="search" placeholder="Search plans..." value="<?php echo htmlspecialchars($search); ?>" onchange="this.form.submit()">
+                    </div>
+                    
+                    <div class="filters-dropdown">
+                        <button type="button" class="filter-btn-toggle" onclick="toggleFilterMenu()">
+                            <span style="font-size: 1.2rem;">⚡</span> Filters
+                        </button>
+                        
+                        <div class="filters-menu" id="filters-menu">
+                            <form method="GET" action="index.php">
+                                <h4 style="margin-bottom: 1.5rem; color: #1e293b;">Refine Results</h4>
+                                <div class="filter-group">
+                                    <label>Operator</label>
+                                    <select name="operator">
+                                        <option value="">All Operators</option>
+                                        <option value="Jio" <?php if($operator == 'Jio') echo 'selected'; ?>>Jio</option>
+                                        <option value="Airtel" <?php if($operator == 'Airtel') echo 'selected'; ?>>Airtel</option>
+                                        <option value="VI" <?php if($operator == 'VI') echo 'selected'; ?>>VI</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-group">
+                                    <label>Max Price (₹)</label>
+                                    <input type="number" name="max_price" placeholder="e.g. 500" value="<?php echo htmlspecialchars($max_price); ?>">
+                                </div>
+
+                                <div class="filter-group">
+                                    <label>Min Validity (Days)</label>
+                                    <input type="number" name="min_validity" placeholder="e.g. 28" value="<?php echo htmlspecialchars($min_validity); ?>">
+                                </div>
+
+                                <div class="filter-group">
+                                    <label>Min Data per Day (GB)</label>
+                                    <select name="min_data">
+                                        <option value="">Any</option>
+                                        <option value="1" <?php if($min_data == '1') echo 'selected'; ?>>1 GB+</option>
+                                        <option value="1.5" <?php if($min_data == '1.5') echo 'selected'; ?>>1.5 GB+</option>
+                                        <option value="2" <?php if($min_data == '2') echo 'selected'; ?>>2 GB+</option>
+                                        <option value="3" <?php if($min_data == '3') echo 'selected'; ?>>3 GB+</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-group">
+                                    <label>Sort By</label>
+                                    <select name="sort">
+                                        <option value="price_asc" <?php if($sort == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
+                                        <option value="price_desc" <?php if($sort == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
+                                        <option value="validity_desc" <?php if($sort == 'validity_desc') echo 'selected'; ?>>Longest Validity</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn-apply">Apply Filters</button>
+                                <a href="index.php" class="btn-reset">Reset All</a>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -438,45 +494,44 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
-        </main>
-
+            
             <!-- Comparison Table -->
             <?php if (!empty($compare_plans)): ?>
                 <section id="comparison" class="comparison-section">
-                    <h2>Plan Comparison</h2>
-                    <div style="overflow-x: auto;">
-                        <table class="comparison-table">
+                    <h2 style="margin-bottom: 1.5rem; color: var(--primary);">Plan Comparison</h2>
+                    <div style="overflow-x: auto; background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #f1f5f9;">
+                        <table class="comparison-table" style="width: 100%; border-collapse: collapse;">
                             <thead>
-                                <tr>
-                                    <th>Feature</th>
+                                <tr style="border-bottom: 2px solid #f1f5f9;">
+                                    <th style="padding: 1rem; text-align: left;">Feature</th>
                                     <?php foreach ($compare_plans as $p): ?>
-                                        <th><?php echo $p['operator']; ?> - ₹<?php echo $p['price']; ?></th>
+                                        <th style="padding: 1rem; text-align: left;"><?php echo $p['operator']; ?> - ₹<?php echo $p['price']; ?></th>
                                     <?php endforeach; ?>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Price</td>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 1rem;">Price</td>
                                     <?php foreach ($compare_plans as $p): ?>
-                                        <td>₹<?php echo $p['price']; ?></td>
+                                        <td style="padding: 1rem;">₹<?php echo $p['price']; ?></td>
+                                    <?php endforeach; ?>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 1rem;">Validity</td>
+                                    <?php foreach ($compare_plans as $p): ?>
+                                        <td style="padding: 1rem;"><?php echo $p['validity']; ?> Days</td>
+                                    <?php endforeach; ?>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 1rem;">Data per Day</td>
+                                    <?php foreach ($compare_plans as $p): ?>
+                                        <td style="padding: 1rem;"><?php echo $p['data_per_day']; ?> GB</td>
                                     <?php endforeach; ?>
                                 </tr>
                                 <tr>
-                                    <td>Validity</td>
+                                    <td style="padding: 1rem;">Cost per Day</td>
                                     <?php foreach ($compare_plans as $p): ?>
-                                        <td><?php echo $p['validity']; ?> Days</td>
-                                    <?php endforeach; ?>
-                                </tr>
-                                <tr>
-                                    <td>Data per Day</td>
-                                    <?php foreach ($compare_plans as $p): ?>
-                                        <td><?php echo $p['data_per_day']; ?> GB</td>
-                                    <?php endforeach; ?>
-                                </tr>
-                                <tr>
-                                    <td>Cost per Day</td>
-                                    <?php foreach ($compare_plans as $p): ?>
-                                        <td>₹<?php echo number_format($p['price'] / $p['validity'], 2); ?></td>
+                                        <td style="padding: 1rem;">₹<?php echo number_format($p['price'] / $p['validity'], 2); ?></td>
                                     <?php endforeach; ?>
                                 </tr>
                             </tbody>
@@ -488,7 +543,23 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
     </div>
 </div>
 
-<script>
+    function toggleFilterMenu() {
+        document.getElementById('filters-menu').classList.toggle('active');
+    }
+
+    // Close menu when clicking outside
+    window.onclick = function(event) {
+        if (!event.target.matches('.filter-btn-toggle') && !event.target.closest('.filters-menu')) {
+            var dropdowns = document.getElementsByClassName("filters-menu");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('active')) {
+                    openDropdown.classList.remove('active');
+                }
+            }
+        }
+    }
+
     function toggleDetails(btn) {
         const card = btn.closest('.plan-row-card');
         const expand = card.querySelector('.plan-details-expand');
