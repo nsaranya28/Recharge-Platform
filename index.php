@@ -103,7 +103,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
 
         /* HERO SECTION */
         .plan-comparison-header {
-            margin-top: 5rem;
+            margin-top: 6rem;
             margin-bottom: 3rem;
             text-align: center;
             position: relative;
@@ -193,11 +193,11 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
         }
 
         .plan-row-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 1px dashed #cbd5e1;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding-bottom: 20px !important;
+            border-bottom: 1px dashed #cbd5e1 !important;
         }
         
         .row-price { font-size: 32px; font-weight: 800; color: #0f172a; letter-spacing: -1px; }
@@ -225,10 +225,10 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
         }
 
         .plan-row-footer {
-            display: flex;
-            justify-content: space-between;
-            padding-top: 15px;
-            align-items: center;
+            display: flex !important;
+            justify-content: space-between !important;
+            padding-top: 15px !important;
+            align-items: center !important;
         }
         .cost-badge {
             background: #f1f5f9;
@@ -252,6 +252,16 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
         .details-link:hover {
             background: var(--primary);
             color: white;
+        }
+
+        /* LAYOUT FIXES */
+        .main-layout {
+            display: block;
+            width: 100%;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
         /* DETAILS EXPAND */
@@ -366,6 +376,9 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             border-color: var(--primary);
             color: var(--primary);
         }
+        .filters-dropdown {
+            position: relative;
+        }
         .filters-menu {
             display: none;
             position: absolute;
@@ -457,9 +470,7 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
         <p>Select your operator and find the perfect mobile recharge plan in seconds with our intelligent filtering system.</p>
     </div>
 
-
-    <div class="main-layout">
-        <main>
+    <main>
             <div class="plan-selection-header">
                 <h3>Select Plan</h3>
                 <div style="display: flex; gap: 15px; align-items: center;">
@@ -531,10 +542,10 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
 
             <!-- Category Tabs -->
             <div class="plan-tabs">
-                <a href="index.php" class="tab-item active">RECOMMENDED</a>
-                <a href="index.php?operator=<?php echo $operator; ?>&max_price=500" class="tab-item">POPULAR</a>
-                <a href="index.php?min_data=2" class="tab-item">SMART PHONE</a>
-                <a href="index.php?max_validity=1" class="tab-item">DATA ADD ON</a>
+                <a href="index.php" class="tab-item <?php echo empty($_GET['max_price']) && empty($_GET['min_data']) && empty($_GET['max_validity']) ? 'active' : ''; ?>">RECOMMENDED</a>
+                <a href="index.php?operator=<?php echo $operator; ?>&max_price=500" class="tab-item <?php echo isset($_GET['max_price']) && $_GET['max_price'] == '500' ? 'active' : ''; ?>">POPULAR</a>
+                <a href="index.php?min_data=2" class="tab-item <?php echo isset($_GET['min_data']) && $_GET['min_data'] == '2' ? 'active' : ''; ?>">SMART PHONE</a>
+                <a href="index.php?max_validity=1" class="tab-item <?php echo isset($_GET['max_validity']) && $_GET['max_validity'] == '1' ? 'active' : ''; ?>">DATA ADD ON</a>
             </div>
 
             <div class="plans-list-container">
@@ -658,7 +669,6 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
                 </section>
             <?php endif; ?>
         </main>
-    </div>
 </div>
 
 <script>
