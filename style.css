@@ -648,19 +648,9 @@ header p {
     text-align: center;
     transition: background 0.2s;
 }
-    color: white;
-    text-decoration: none;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-weight: 700;
-    display: inline-block;
-    text-align: center;
-    transition: background 0.2s;
-}
 
 .btn-apply-orange:hover {
     background: var(--primary-hover);
-}
 }
 
 .plan-row-footer {
