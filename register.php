@@ -12,10 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
     $mobile = trim($_POST['mobile']);
-    $password = $_POST['password'];
+    $form_password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
 
-    if ($password !== $confirm_password) {
+    if ($form_password !== $confirm_password) {
         $error = "Passwords do not match!";
     } else {
         // Initialize MySQLi connection
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->close();
 
                 // 3. Register user and redirect to login
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                $hashed_password = password_hash($form_password, PASSWORD_DEFAULT);
                 $stmt = $conn->prepare("INSERT INTO users (name, email, mobile, password) VALUES (?, ?, ?, ?)");
                 $stmt->bind_param("ssss", $name, $email, $mobile, $hashed_password);
                 if ($stmt->execute()) {

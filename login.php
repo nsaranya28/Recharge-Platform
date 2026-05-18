@@ -10,7 +10,7 @@ if (isset($_SESSION['user_id'])) {
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $identifier = trim($_POST['identifier']); // Email or Mobile
-    $password = $_POST['password'];
+    $form_password = $_POST['password'];
 
     // Initialize MySQLi connection
     $conn = new mysqli($host, $username, $password, $dbname);
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $authenticated = false;
     while ($user = $result->fetch_assoc()) {
-        if (password_verify($password, $user['password'])) {
+        if (password_verify($form_password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $authenticated = true;
