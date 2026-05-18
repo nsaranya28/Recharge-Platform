@@ -2,12 +2,6 @@
 require_once 'db.php';
 session_start();
 
-// Store DB credentials securely under unique names to prevent conflict with POST variables
-$db_host = $host;
-$db_user = $username;
-$db_pass = $password;
-$db_name = $dbname;
-
 if (isset($_SESSION['user_id'])) {
     header("Location: dashboard.php");
     exit();
@@ -24,8 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password !== $confirm_password) {
         $error = "Passwords do not match!";
     } else {
-        // Initialize MySQLi connection using unique db credentials variables
-        $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+        // Initialize MySQLi connection
+        $conn = new mysqli($host, $username, $password, $dbname);
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
