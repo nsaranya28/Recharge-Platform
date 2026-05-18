@@ -15,9 +15,7 @@
 define('SMTP_HOST', 'ssl://smtp.gmail.com');
 define('SMTP_PORT', 465);
 define('SMTP_USER', 'nsaranya282@gmail.com');
-
-// Replace this with your 16-character Google App Password (e.g., 'abcd efgh ijkl mnop')
-define('SMTP_PASS', 'YOUR_GMAIL_APP_PASSWORD_HERE'); 
+define('SMTP_PASS', 'your-16-character-app-password'); 
 
 /**
  * Sends a registration OTP verification email
@@ -32,10 +30,10 @@ function sendGmailOTP($toEmail, $otp) {
     $user = SMTP_USER;
     $pass = SMTP_PASS;
 
-    if ($pass === 'YOUR_GMAIL_APP_PASSWORD_HERE' || empty($pass)) {
+    if ($pass === 'YOUR_GMAIL_APP_PASSWORD_HERE' || $pass === 'your-16-character-app-password' || empty($pass)) {
         return [
             'status' => 'error',
-            'message' => 'Please set your 16-character Google App Password in <strong>gmail_helper.php</strong>. <br>You can generate one at <a href="https://myaccount.google.com/apppasswords" target="_blank">Google App Passwords</a>.'
+            'message' => 'Please generate a real 16-character Google App Password for <strong>nsaranya282@gmail.com</strong> and paste it into <strong>gmail_helper.php</strong>. You cannot use the placeholder text "your-16-character-app-password". <br><br><strong>How to generate one:</strong><br>1. Go to <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color: #7c3aed; font-weight: bold;">Google App Passwords</a>.<br>2. Set a name like "Smart Recharge" and click <strong>Create</strong>.<br>3. Copy the <strong>16-digit code</strong> Google shows you and paste it in <strong>gmail_helper.php</strong>!'
         ];
     }
 
