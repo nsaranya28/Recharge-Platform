@@ -2,6 +2,12 @@
 require_once 'db.php';
 session_start();
 
+// Store DB credentials securely under unique names to prevent conflict with POST variables
+$db_host = $host;
+$db_user = $username;
+$db_pass = $password;
+$db_name = $dbname;
+
 if (isset($_SESSION['user_id'])) {
     header("Location: dashboard.php");
     exit();
@@ -18,30 +24,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password !== $confirm_password) {
         $error = "Passwords do not match!";
     } else {
-        // Check if mobile already exists
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE mobile = ?");
-        $stmt->execute([$mobile]);
-        if ($stmt->fetch()) {
+        // Initialize MySQLi connection using unique db credentials variables
+        $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // 1. Check if mobile already exists
+        $stmt = $conn->prepare("SELECT id FROM users WHERE mobile = ?");
+        $stmt->bind_param("s", $mobile);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
             $error = "This Mobile number is already registered!";
+            $stmt->close();
         } else {
-            // Check if email already exists (since email has a UNIQUE constraint in users table)
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-            $stmt->execute([$email]);
-            if ($stmt->fetch()) {
-                $error = "This Email address is already registered!";
+            $stmt->close();
+            
+            // 2. Check if email already exists
+            $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $stmt->store_result();
+            if ($stmt->num_rows > 0) {
+                // Email already exists: Do not show error, set session message, and redirect to login
+                $stmt->close();
+                $conn->close();
+                $_SESSION['auth_message'] = "Account already exists. Please login.";
+                $_SESSION['auth_message_type'] = "info";
+                header("Location: login.php");
+                exit();
             } else {
+                $stmt->close();
+
+                // 3. Register user and redirect to login
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, mobile, password) VALUES (?, ?, ?, ?)");
-                if ($stmt->execute([$name, $email, $mobile, $hashed_password])) {
-                    $_SESSION['user_id'] = $pdo->lastInsertId();
-                    $_SESSION['user_name'] = $name;
-                    header("Location: dashboard.php");
+                $stmt = $conn->prepare("INSERT INTO users (name, email, mobile, password) VALUES (?, ?, ?, ?)");
+                $stmt->bind_param("ssss", $name, $email, $mobile, $hashed_password);
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    $conn->close();
+                    $_SESSION['auth_message'] = "Registration successful. Please login.";
+                    $_SESSION['auth_message_type'] = "success";
+                    header("Location: login.php");
                     exit();
                 } else {
                     $error = "Registration failed. Please try again.";
+                    $stmt->close();
                 }
             }
         }
+        $conn->close();
     }
 }
 ?>
@@ -66,14 +99,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-align: center;
             margin-bottom: 2rem;
         }
-        .error-msg {
-            background: #fee2e2;
-            color: #ef4444;
-            padding: 0.75rem;
-            border-radius: 8px;
+        /* Bootstrap Alert Styling */
+        .alert {
+            padding: 0.75rem 1.25rem;
             margin-bottom: 1.5rem;
+            border: 1px solid transparent;
+            border-radius: 8px;
             font-size: 0.875rem;
             text-align: center;
+        }
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
         }
     </style>
 </head>
@@ -88,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <?php if ($error): ?>
-            <div class="error-msg"><?php echo $error; ?></div>
+            <div class="alert alert-danger"><?php echo $error; ?></div>
         <?php endif; ?>
 
         <form method="POST">

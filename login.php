@@ -2,6 +2,12 @@
 require_once 'db.php';
 session_start();
 
+// Store DB credentials securely under unique names to prevent conflict with POST variables
+$db_host = $host;
+$db_user = $username;
+$db_pass = $password;
+$db_name = $dbname;
+
 if (isset($_SESSION['user_id'])) {
     header("Location: dashboard.php");
     exit();
@@ -12,12 +18,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $identifier = trim($_POST['identifier']); // Email or Mobile
     $password = $_POST['password'];
 
-    $stmt = $pdo->prepare("SELECT id, name, password FROM users WHERE email = ? OR mobile = ?");
-    $stmt->execute([$identifier, $identifier]);
-    $users = $stmt->fetchAll();
+    // Initialize MySQLi connection using unique db credentials variables
+    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    // Fetch user matching either email or mobile
+    $stmt = $conn->prepare("SELECT id, name, password FROM users WHERE email = ? OR mobile = ?");
+    $stmt->bind_param("ss", $identifier, $identifier);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     $authenticated = false;
-    foreach ($users as $user) {
+    while ($user = $result->fetch_assoc()) {
         if (password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
@@ -25,6 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
         }
     }
+    $stmt->close();
+    $conn->close();
 
     if ($authenticated) {
         header("Location: dashboard.php");
@@ -55,14 +71,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-align: center;
             margin-bottom: 2rem;
         }
-        .error-msg {
-            background: #fee2e2;
-            color: #ef4444;
-            padding: 0.75rem;
-            border-radius: 8px;
+        /* Bootstrap Alert Styling */
+        .alert {
+            padding: 0.75rem 1.25rem;
             margin-bottom: 1.5rem;
+            border: 1px solid transparent;
+            border-radius: 8px;
             font-size: 0.875rem;
             text-align: center;
+        }
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
         }
     </style>
 </head>
@@ -76,8 +107,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p style="color: var(--text-muted);">Login to manage your recharges</p>
         </div>
 
+        <!-- Bootstrap Alert Messages from Redirect or Authentication Errors -->
+        <?php if (isset($_SESSION['auth_message'])): ?>
+            <div class="alert alert-<?php echo $_SESSION['auth_message_type']; ?>">
+                <?php 
+                echo $_SESSION['auth_message']; 
+                unset($_SESSION['auth_message']);
+                unset($_SESSION['auth_message_type']);
+                ?>
+            </div>
+        <?php endif; ?>
+
         <?php if ($error): ?>
-            <div class="error-msg"><?php echo $error; ?></div>
+            <div class="alert alert-danger"><?php echo $error; ?></div>
         <?php endif; ?>
 
         <form method="POST">
