@@ -18,21 +18,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password !== $confirm_password) {
         $error = "Passwords do not match!";
     } else {
-        // Check if mobile already exists (Email is now allowed to be used multiple times)
+        // Check if mobile already exists
         $stmt = $pdo->prepare("SELECT id FROM users WHERE mobile = ?");
         $stmt->execute([$mobile]);
         if ($stmt->fetch()) {
             $error = "This Mobile number is already registered!";
         } else {
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (name, email, mobile, password) VALUES (?, ?, ?, ?)");
-            if ($stmt->execute([$name, $email, $mobile, $hashed_password])) {
-                $_SESSION['user_id'] = $pdo->lastInsertId();
-                $_SESSION['user_name'] = $name;
-                header("Location: dashboard.php");
-                exit();
+            // Check if email already exists (since email has a UNIQUE constraint in users table)
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt->execute([$email]);
+            if ($stmt->fetch()) {
+                $error = "This Email address is already registered!";
             } else {
-                $error = "Registration failed. Please try again.";
+                // Generate 6-digit OTP
+                $otp = mt_rand(100000, 999999);
+                
+                // Store user details in session temporarily
+                $_SESSION['temp_user'] = [
+                    'name' => $name,
+                    'email' => $email,
+                    'mobile' => $mobile,
+                    'password' => password_hash($password, PASSWORD_DEFAULT),
+                    'otp' => $otp,
+                    'expires' => time() + 600 // 10 minutes validity
+                ];
+
+                // Send email OTP via Gmail helper
+                require_once 'gmail_helper.php';
+                $mailResult = sendGmailOTP($email, $otp);
+
+                if ($mailResult['status'] === 'success') {
+                    header("Location: otp.php");
+                    exit();
+                } else {
+                    $error = "Failed to send verification email. " . $mailResult['message'];
+                }
             }
         }
     }
