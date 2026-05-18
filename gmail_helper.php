@@ -162,3 +162,162 @@ function sendGmailOTP($toEmail, $otp) {
         return ['status' => 'error', 'message' => $e->getMessage()];
     }
 }
+
+/**
+ * Sends a recharge success confirmation email
+ * 
+ * @param string $toEmail Recipient's email address
+ * @param string $userName Customer's name
+ * @param string $operator Mobile operator name
+ * @param string $price Recharge amount paid
+ * @param string $validity Recharge validity in days
+ * @param string $data Mobile data allowance per day
+ * @param string $txId Transaction reference ID
+ * @return array Status array with status ('success' or 'error') and message
+ */
+function sendRechargeSuccessEmail($toEmail, $userName, $operator, $price, $validity, $data, $txId) {
+    $host = SMTP_HOST;
+    $port = SMTP_PORT;
+    $user = SMTP_USER;
+    $pass = SMTP_PASS;
+
+    if ($pass === 'YOUR_GMAIL_APP_PASSWORD_HERE' || $pass === 'your-16-character-app-password' || empty($pass)) {
+        return [
+            'status' => 'error',
+            'message' => 'Please set your Google App Password in gmail_helper.php.'
+        ];
+    }
+
+    $socket = @fsockopen($host, $port, $errno, $errstr, 10);
+    if (!$socket) {
+        return [
+            'status' => 'error', 
+            'message' => "Could not connect to Gmail SMTP server: $errstr ($errno)"
+        ];
+    }
+
+    $readResponse = function($socket, $expectedCode) {
+        $response = '';
+        while ($line = fgets($socket, 515)) {
+            $response .= $line;
+            if (substr($line, 3, 1) === ' ') {
+                break;
+            }
+        }
+        $code = substr($response, 0, 3);
+        if ($code != $expectedCode) {
+            throw new Exception("SMTP Error: " . trim($response));
+        }
+        return $response;
+    };
+
+    try {
+        $readResponse($socket, '220');
+
+        fwrite($socket, "EHLO localhost\r\n");
+        $readResponse($socket, '250');
+
+        fwrite($socket, "AUTH LOGIN\r\n");
+        $readResponse($socket, '334');
+
+        fwrite($socket, base64_encode($user) . "\r\n");
+        $readResponse($socket, '334');
+
+        $cleanPass = str_replace(' ', '', $pass);
+        fwrite($socket, base64_encode($cleanPass) . "\r\n");
+        $readResponse($socket, '235');
+
+        fwrite($socket, "MAIL FROM:<$user>\r\n");
+        $readResponse($socket, '250');
+
+        fwrite($socket, "RCPT TO:<$toEmail>\r\n");
+        $readResponse($socket, '250');
+
+        fwrite($socket, "DATA\r\n");
+        $readResponse($socket, '354');
+
+        $subject = "Smart Recharge - Recharge Successful!";
+        $headers = [
+            "MIME-Version: 1.0",
+            "Content-Type: text/html; charset=UTF-8",
+            "From: Smart Recharge <$user>",
+            "To: $toEmail",
+            "Subject: =?UTF-8?B?" . base64_encode($subject) . "?=",
+            "Date: " . date('r'),
+            "X-Mailer: PHP/" . phpversion()
+        ];
+
+        $htmlMessage = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='utf-8'>
+            <title>Recharge Successful</title>
+        </head>
+        <body style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9fafb; margin: 0; padding: 2rem;\">
+            <table align='center' border='0' cellpadding='0' cellspacing='0' width='100%' style='max-width: 600px; background-color: #ffffff; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden;'>
+                <tr>
+                    <td style='background: linear-gradient(135deg, #8b5cf6, #7c3aed); padding: 2.5rem; text-align: center; color: #ffffff;'>
+                        <div style='font-size: 40px; margin-bottom: 10px;'>🎉</div>
+                        <h1 style='margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.5px;'>Recharge Successful!</h1>
+                        <p style='margin: 5px 0 0; opacity: 0.9; font-size: 14px;'>Transaction ID: $txId</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style='padding: 2.5rem 2rem;'>
+                        <p style='color: #1f2937; font-size: 16px; font-weight: 600; margin: 0 0 1rem;'>Hi $userName,</p>
+                        <p style='color: #4b5563; font-size: 15px; line-height: 1.6; margin: 0 0 1.5rem;'>Your mobile recharge has been completed successfully. Here are your transaction and plan details:</p>
+                        
+                        <table width='100%' style='border-collapse: collapse; margin-bottom: 2rem; background-color: #f9fafb; border-radius: 12px; border: 1px solid #f3f4f6;'>
+                            <tr>
+                                <td style='padding: 1rem; color: #6b7280; font-size: 14px; border-bottom: 1px solid #f3f4f6;'>Operator:</td>
+                                <td style='padding: 1rem; color: #1f2937; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #f3f4f6;'>$operator</td>
+                            </tr>
+                            <tr>
+                                <td style='padding: 1rem; color: #6b7280; font-size: 14px; border-bottom: 1px solid #f3f4f6;'>Recharge Amount:</td>
+                                <td style='padding: 1rem; color: #7c3aed; font-size: 16px; font-weight: 700; text-align: right; border-bottom: 1px solid #f3f4f6;'>₹$price</td>
+                            </tr>
+                            <tr>
+                                <td style='padding: 1rem; color: #6b7280; font-size: 14px; border-bottom: 1px solid #f3f4f6;'>Data Allowance:</td>
+                                <td style='padding: 1rem; color: #1f2937; font-size: 14px; font-weight: 600; text-align: right; border-bottom: 1px solid #f3f4f6;'>$data GB/Day</td>
+                            </tr>
+                            <tr>
+                                <td style='padding: 1rem; color: #6b7280; font-size: 14px;'>Validity:</td>
+                                <td style='padding: 1rem; color: #1f2937; font-size: 14px; font-weight: 600; text-align: right;'>$validity Days</td>
+                            </tr>
+                        </table>
+                        
+                        <div style='background-color: #f5f3ff; border-left: 4px solid #7c3aed; border-radius: 4px; padding: 1rem 1.5rem; margin-bottom: 2rem;'>
+                            <p style='color: #5b21b6; font-size: 14px; font-style: italic; margin: 0; line-height: 1.6;'>
+                                \"Successfully recharged ₹$price for $operator. Your plan of {$data}GB/Day for $validity Days is now active. Thank you for using Smart Recharge!\"
+                            </p>
+                        </div>
+                        
+                        <p style='color: #4b5563; font-size: 14px; line-height: 1.5; margin: 0;'>If you have any questions or did not authorize this transaction, please contact our support team immediately.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style='background-color: #f9fafb; padding: 1.5rem; text-align: center; border-top: 1px solid #e5e7eb;'>
+                        <p style='color: #6b7280; font-size: 12px; margin: 0;'>&copy; " . date('Y') . " Smart Recharge. All rights reserved.</p>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
+        ";
+
+        $body = str_replace("\n.", "\n..", $htmlMessage);
+
+        fwrite($socket, implode("\r\n", $headers) . "\r\n\r\n" . $body . "\r\n.\r\n");
+        $readResponse($socket, '250');
+
+        fwrite($socket, "QUIT\r\n");
+        $readResponse($socket, '221');
+
+        fclose($socket);
+        return ['status' => 'success', 'message' => 'Recharge email sent successfully!'];
+    } catch (Exception $e) {
+        fclose($socket);
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}

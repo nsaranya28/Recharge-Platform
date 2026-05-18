@@ -72,34 +72,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  
                 $pdo->commit();
  
-                // --- Send Notifications (Wrapped in try-catch to avoid breaking success flow) ---
+                // --- Send Email receipt (Replacing SMS/WhatsApp notifications as requested) ---
                 $userName = $_SESSION['user_name'] ?? 'Customer';
                 $txId = strtoupper(substr(md5(time() . $mobile), 0, 10)); // Generate Transaction ID
                 $smsStatus = 'pending';
- 
-                try {
-                    // 1. Send SMS via Fast2SMS
-                    if (file_exists('fast2sms_helper.php')) {
-                        require_once 'fast2sms_helper.php';
-                        $customSMS = "Successfully recharged Rs.$price for $operator. Your plan of {$data}GB/Day for $validity Days is now active. Thank you for using Smart Recharge.";
-                        $smsResponse = sendFast2SMS($mobile, $price, $operator, $customSMS);
-                        if (isset($smsResponse['return']) && $smsResponse['return'] === true) {
-                            $smsStatus = 'sent';
-                        } else {
-                            $smsStatus = 'failed';
-                        }
-                    }
-                } catch (Exception $e) {
-                    $smsStatus = 'error';
-                }
 
+                // Fetch registered user email
+                $userEmail = '';
                 try {
-                    // 2. Send WhatsApp Notification via Twilio
-                    if (file_exists('twilio_helper.php')) {
-                        require_once 'twilio_helper.php';
-                        sendWhatsAppRechargeSuccess($mobile, $userName, $operator, $price, $validity, $txId);
-                    }
+                    $userStmt = $pdo->prepare("SELECT email FROM users WHERE id = ?");
+                    $userStmt->execute([$user_id]);
+                    $currentUser = $userStmt->fetch();
+                    $userEmail = $currentUser['email'] ?? '';
                 } catch (Exception $e) {}
+
+                // Send email receipt via Gmail SMTP
+                if (!empty($userEmail)) {
+                    try {
+                        if (file_exists('gmail_helper.php')) {
+                            require_once 'gmail_helper.php';
+                            $mailResult = sendRechargeSuccessEmail($userEmail, $userName, $operator, $price, $validity, $data, $txId);
+                            if ($mailResult['status'] === 'success') {
+                                $smsStatus = 'sent';
+                            } else {
+                                $smsStatus = 'failed';
+                            }
+                        }
+                    } catch (Exception $e) {
+                        $smsStatus = 'error';
+                    }
+                }
 
                 header("Location: success.php?mobile=" . urlencode($mobile) . "&price=" . urlencode($price) . "&op=" . urlencode($operator) . "&val=" . urlencode($validity) . "&dat=" . urlencode($data) . "&txid=" . urlencode($txId) . "&sms_status=" . $smsStatus);
                 exit();
