@@ -15,7 +15,7 @@
 define('SMTP_HOST', 'ssl://smtp.gmail.com');
 define('SMTP_PORT', 465);
 define('SMTP_USER', 'nsaranya282@gmail.com');
-define('SMTP_PASS', 'abcd efgh ijkl mnop'); 
+define('SMTP_PASS', 'tppa woju kfbz xdun'); 
 
 /**
  * Sends a registration OTP verification email
