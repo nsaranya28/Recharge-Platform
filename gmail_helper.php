@@ -236,7 +236,7 @@ function sendRechargeSuccessEmail($toEmail, $userName, $operator, $price, $valid
         fwrite($socket, "DATA\r\n");
         $readResponse($socket, '354');
 
-        $subject = "Smart Recharge - Recharge Successful!";
+        $subject = "Smart Recharge - ₹$price Recharge Successful!";
         $headers = [
             "MIME-Version: 1.0",
             "Content-Type: text/html; charset=UTF-8",
@@ -259,7 +259,7 @@ function sendRechargeSuccessEmail($toEmail, $userName, $operator, $price, $valid
                 <tr>
                     <td style='background: linear-gradient(135deg, #8b5cf6, #7c3aed); padding: 2.5rem; text-align: center; color: #ffffff;'>
                         <div style='font-size: 40px; margin-bottom: 10px;'>🎉</div>
-                        <h1 style='margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.5px;'>Recharge Successful!</h1>
+                        <h1 style='margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.5px;'>Recharged ₹$price Successfully!</h1>
                         <p style='margin: 5px 0 0; opacity: 0.9; font-size: 14px;'>Transaction ID: $txId</p>
                     </td>
                 </tr>
