@@ -7,6 +7,12 @@ if (isset($_SESSION['user_id'])) {
     exit();
 }
 
+$prefilled_email = '';
+if (isset($_SESSION['registered_email'])) {
+    $prefilled_email = $_SESSION['registered_email'];
+    unset($_SESSION['registered_email']);
+}
+
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $identifier = trim($_POST['identifier']); // Email or Mobile
@@ -119,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="POST">
             <div class="filter-group">
                 <label>Email or Mobile Number</label>
-                <input type="text" name="identifier" placeholder="Enter your email or mobile" required>
+                <input type="text" name="identifier" value="<?php echo htmlspecialchars($prefilled_email); ?>" placeholder="Enter your email or mobile" required>
             </div>
             <div class="filter-group">
                 <label>Password</label>

@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $conn->close();
                 $_SESSION['auth_message'] = "Account already exists. Please login.";
                 $_SESSION['auth_message_type'] = "info";
+                $_SESSION['registered_email'] = $email;
                 header("Location: login.php");
                 exit();
             } else {
@@ -60,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $conn->close();
                     $_SESSION['auth_message'] = "Registration successful. Please login.";
                     $_SESSION['auth_message_type'] = "success";
+                    $_SESSION['registered_email'] = $email;
                     header("Location: login.php");
                     exit();
                 } else {
