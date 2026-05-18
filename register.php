@@ -34,40 +34,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->close();
         } else {
             $stmt->close();
-            
-            // 2. Check if email already exists
-            $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-            $stmt->bind_param("s", $email);
-            $stmt->execute();
-            $stmt->store_result();
-            if ($stmt->num_rows > 0) {
-                // Email already exists: Do not show error, set session message, and redirect to login
+
+            // Register user and redirect to login (allowing same email multiple times)
+            $hashed_password = password_hash($form_password, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("INSERT INTO users (name, email, mobile, password) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $name, $email, $mobile, $hashed_password);
+            if ($stmt->execute()) {
                 $stmt->close();
                 $conn->close();
-                $_SESSION['auth_message'] = "Account already exists. Please login.";
-                $_SESSION['auth_message_type'] = "info";
+                $_SESSION['auth_message'] = "Registration successful. Please login.";
+                $_SESSION['auth_message_type'] = "success";
                 $_SESSION['registered_email'] = $email;
                 header("Location: login.php");
                 exit();
             } else {
+                $error = "Registration failed. Please try again.";
                 $stmt->close();
-
-                // 3. Register user and redirect to login
-                $hashed_password = password_hash($form_password, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("INSERT INTO users (name, email, mobile, password) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("ssss", $name, $email, $mobile, $hashed_password);
-                if ($stmt->execute()) {
-                    $stmt->close();
-                    $conn->close();
-                    $_SESSION['auth_message'] = "Registration successful. Please login.";
-                    $_SESSION['auth_message_type'] = "success";
-                    $_SESSION['registered_email'] = $email;
-                    header("Location: login.php");
-                    exit();
-                } else {
-                    $error = "Registration failed. Please try again.";
-                    $stmt->close();
-                }
             }
         }
         $conn->close();
