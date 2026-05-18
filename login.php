@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Fetch user matching either email or mobile
-    $stmt = $conn->prepare("SELECT id, name, password FROM users WHERE email = ? OR mobile = ?");
+    $stmt = $conn->prepare("SELECT id, name, email, password FROM users WHERE email = ? OR mobile = ?");
     $stmt->bind_param("ss", $identifier, $identifier);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($form_password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_email'] = $user['email'];
             $authenticated = true;
             break;
         }
