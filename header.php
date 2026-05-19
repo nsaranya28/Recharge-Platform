@@ -2,8 +2,23 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-// Handle logout
 ?>
+<!-- Theme initialization script (runs immediately to prevent flash of light mode) -->
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            document.documentElement.classList.add('dark-mode');
+            document.addEventListener('DOMContentLoaded', function() {
+                document.body.classList.add('dark-mode');
+                const btn = document.getElementById('global-theme-btn');
+                if (btn) btn.innerHTML = '☀️';
+            });
+        }
+    })();
+</script>
+
 <nav class="navbar">
     <div class="nav-container">
         <a href="index.php" class="nav-logo">
@@ -23,6 +38,31 @@ if (session_status() === PHP_SESSION_NONE) {
                     <span class="nav-icon">🏠</span> Home
                 </a>
             </li>
+            
+            <li class="nav-item">
+                <a href="billers.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'billers.php' ? 'active' : ''; ?>">
+                    <span class="nav-icon">💸</span> Billers
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="ev_recharge.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'ev_recharge.php' ? 'active' : ''; ?>">
+                    <span class="nav-icon">🔌</span> EV Recharge
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="tn_services.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'tn_services.php' ? 'active' : ''; ?>">
+                    <span class="nav-icon">🏛️</span> TN Services
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="contact.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'contact.php' ? 'active' : ''; ?>">
+                    <span class="nav-icon">📞</span> Contact
+                </a>
+            </li>
+
             <?php if (isset($_SESSION['user_id'])): ?>
                 <li class="nav-item">
                     <a href="dashboard.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : ''; ?>">
@@ -30,7 +70,7 @@ if (session_status() === PHP_SESSION_NONE) {
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="dashboard.php?logout=1" class="nav-link" style="color: #ef4444;">
+                    <a href="dashboard.php?logout=1" class="nav-link" style="color: #ef4444 !important;">
                         <span class="nav-icon">🚪</span> Logout
                     </a>
                 </li>
@@ -47,11 +87,39 @@ if (session_status() === PHP_SESSION_NONE) {
                     <a href="register.php" class="nav-btn">Get Started</a>
                 </li>
             <?php endif; ?>
+
+            <!-- Theme Toggle Item -->
+            <li class="nav-item" style="display: flex; align-items: center; padding: 0.25rem 0.75rem;">
+                <button type="button" class="theme-toggle-btn" onclick="toggleGlobalTheme()" id="global-theme-btn" title="Toggle Dark/Light Mode">🌙</button>
+            </li>
         </ul>
     </div>
 </nav>
 
 <script>
+    function toggleGlobalTheme() {
+        const isDark = document.body.classList.toggle('dark-mode');
+        document.documentElement.classList.toggle('dark-mode');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        
+        const btn = document.getElementById('global-theme-btn');
+        if (btn) {
+            btn.innerHTML = isDark ? '☀️' : '🌙';
+        }
+
+        // Sync with local page elements (e.g. lucide theme-icon or state variable)
+        const localIcon = document.getElementById('theme-icon');
+        if (localIcon) {
+            localIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            if (window.lucide) window.lucide.createIcons();
+        }
+        
+        // Sync local page states
+        if (typeof isDarkMode !== 'undefined') {
+            isDarkMode = isDark;
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const toggle = document.getElementById('mobile-menu-toggle');
         const menu = document.getElementById('nav-menu');
@@ -66,11 +134,18 @@ if (session_status() === PHP_SESSION_NONE) {
 
         // Close menu when clicking outside
         document.addEventListener('click', function(e) {
-            if (!menu.contains(e.target) && !toggle.contains(e.target) && menu.classList.contains('active')) {
+            if (menu && menu.classList.contains('active') && !menu.contains(e.target) && !toggle.contains(e.target)) {
                 menu.classList.remove('active');
                 toggle.classList.remove('is-active');
                 document.body.classList.remove('menu-open');
             }
         });
+
+        // Initialize state of button
+        const isDarkActive = document.body.classList.contains('dark-mode');
+        const btn = document.getElementById('global-theme-btn');
+        if (btn) {
+            btn.innerHTML = isDarkActive ? '☀️' : '🌙';
+        }
     });
 </script>

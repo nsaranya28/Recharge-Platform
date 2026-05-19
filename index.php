@@ -80,187 +80,27 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=1.2">
     <style>
-        :root {
-            --primary: #6d28d9; /* Deep Violet */
-            --primary-light: #8b5cf6;
-            --secondary: #10b981; /* Success Green */
-            --bg-body: #f8fafc;
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-        }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-body);
-            background-image: 
-                radial-gradient(at 0% 0%, hsla(253,16%,7%,0.05) 0, transparent 50%), 
-                radial-gradient(at 50% 0%, hsla(225,39%,30%,0.05) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, hsla(339,49%,30%,0.05) 0, transparent 50%);
-            color: var(--text-main);
-        }
-
         /* HERO SECTION */
         .plan-comparison-header {
-            margin-top: 6rem;
+            margin-top: 4rem;
             margin-bottom: 3rem;
             text-align: center;
             position: relative;
             z-index: 10;
         }
         .plan-comparison-header h1 {
-            font-size: 3.5rem;
+            font-size: 3.2rem;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), #ec4899);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-            letter-spacing: -1px;
+            margin-bottom: 0.75rem;
+            letter-spacing: -1.5px;
         }
         .plan-comparison-header p {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             color: var(--text-muted);
             max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* TABS */
-        .plan-tabs {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 2.5rem;
-            overflow-x: auto;
-            padding: 5px;
-            justify-content: center;
-        }
-        .tab-item {
-            text-decoration: none;
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 14px;
-            padding: 10px 24px;
-            border-radius: 999px;
-            white-space: nowrap;
-            background: white;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid #e2e8f0;
-        }
-        .tab-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
-            color: var(--primary);
-        }
-        .tab-item.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            border: none;
-            box-shadow: 0 10px 20px -5px rgba(109, 40, 217, 0.4);
-        }
-
-        /* PLAN CARDS */
-        .plan-row-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.8);
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .plan-row-card:hover {
-            transform: translateY(-5px) scale(1.01);
-            box-shadow: 0 20px 40px -5px rgba(109, 40, 217, 0.15);
-            border-color: rgba(109, 40, 217, 0.2);
-        }
-        .row-badge {
-            position: absolute;
-            top: -12px;
-            left: 30px;
-            background: linear-gradient(135deg, #f59e0b, #fbbf24);
-            color: #fff;
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 4px 16px;
-            border-radius: 999px;
-            text-transform: uppercase;
-            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
-            letter-spacing: 0.5px;
-        }
-
-        .plan-row-content {
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            padding-bottom: 20px !important;
-            border-bottom: 1px dashed #cbd5e1 !important;
-        }
-        
-        .row-price { font-size: 32px; font-weight: 800; color: #0f172a; letter-spacing: -1px; }
-        .row-main-val { font-size: 20px; font-weight: 700; color: #1e293b; }
-        .row-subtext { font-size: 13px; color: #64748b; font-weight: 500; margin-top: 4px; }
-        
-        .btn-apply-orange {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            padding: 14px 40px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 16px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px -4px rgba(109, 40, 217, 0.4);
-            letter-spacing: 0.5px;
-        }
-        .btn-apply-orange:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px -4px rgba(109, 40, 217, 0.5);
-        }
-
-        .plan-row-footer {
-            display: flex !important;
-            justify-content: space-between !important;
-            padding-top: 15px !important;
-            align-items: center !important;
-        }
-        .cost-badge {
-            background: #f1f5f9;
-            padding: 6px 16px;
-            border-radius: 99px;
-            font-size: 13px;
-            color: #475569;
-            font-weight: 600;
-        }
-        .cost-badge span { color: var(--primary); font-weight: 800; }
-        .details-link { 
-            color: var(--primary); 
-            font-weight: 700; 
-            text-decoration: none; 
-            font-size: 14px; 
-            background: #f5f3ff;
-            padding: 6px 16px;
-            border-radius: 99px;
-            transition: all 0.2s;
-        }
-        .details-link:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* LAYOUT FIXES */
-        .main-layout {
-            display: block;
-            width: 100%;
-        }
-        .container {
-            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -268,53 +108,53 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
         .plan-details-expand {
             max-height: 0;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #f8fafc;
-            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(124, 58, 237, 0.03);
+            border-radius: var(--radius-sm);
             margin-top: 0;
             opacity: 0;
         }
         .plan-details-expand.active {
             max-height: 500px;
-            padding: 25px;
-            margin-top: 20px;
+            padding: 20px;
+            margin-top: 15px;
             opacity: 1;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-color);
         }
         .details-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 20px;
+            gap: 15px;
         }
         .details-item {
             display: flex;
             flex-direction: column;
         }
         .details-label {
-            font-size: 12px;
-            color: #64748b;
-            font-weight: 600;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .details-val {
-            font-size: 16px;
-            color: #0f172a;
+            font-size: 15px;
+            color: var(--text-main);
             font-weight: 700;
-            margin-top: 4px;
+            margin-top: 2px;
         }
         .ott-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: #fef2f2;
-            color: #dc2626;
-            padding: 6px 14px;
+            background: rgba(236, 72, 153, 0.1);
+            color: var(--secondary);
+            padding: 5px 12px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             margin-top: 15px;
-            border: 1px solid #fca5a5;
+            border: 1px solid rgba(236, 72, 153, 0.2);
         }
         
         /* PLAN COLUMNS */
@@ -326,10 +166,13 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
 
         /* FILTERS & SEARCH */
         .plan-selection-header {
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05);
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1.25rem 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
             margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
@@ -338,39 +181,48 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             gap: 15px;
         }
         .plan-selection-header h3 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 800;
-            color: #0f172a;
+            color: var(--text-main);
             margin: 0;
+            letter-spacing: -0.5px;
         }
         .search-filter-wrapper input {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-family: 'Outfit', sans-serif;
-            font-size: 15px;
+            background: rgba(255,255,255,0.4);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.9rem;
             width: 250px;
-            transition: all 0.2s;
+            transition: var(--transition);
             outline: none;
+            color: var(--text-main);
+        }
+        body.dark-mode .search-filter-wrapper input {
+            background: rgba(15, 23, 42, 0.4);
         }
         .search-filter-wrapper input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+        body.dark-mode .search-filter-wrapper input:focus {
+            background: rgba(15, 23, 42, 0.6);
         }
         .filter-btn-toggle {
-            background: white;
-            border: 1px solid #e2e8f0;
-            padding: 12px 24px;
-            border-radius: 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
             font-weight: 700;
-            font-family: 'Outfit', sans-serif;
-            color: #0f172a;
+            font-family: inherit;
+            color: var(--text-main);
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.2s;
+            transition: var(--transition);
         }
         .filter-btn-toggle:hover {
             border-color: var(--primary);
@@ -384,78 +236,73 @@ if (isset($_POST['compare']) && !empty($_POST['plan_ids'])) {
             position: absolute;
             top: calc(100% + 10px);
             right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            width: 350px;
-            padding: 2rem;
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            width: 320px;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.15);
             z-index: 1000;
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid var(--glass-border);
         }
         .filters-menu.active {
             display: block;
-            animation: slideInDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideInDown 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .filter-group label {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 600;
-            color: #334155;
-            margin-bottom: 8px;
+            font-family: inherit;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
             display: block;
         }
-        .filter-group select, .filter-group input {
+        
+        .filters-menu .filter-group select, 
+        .filters-menu .filter-group input {
             width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            font-family: 'Outfit', sans-serif;
-            background: #f8fafc;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            font-family: inherit;
+            background: rgba(255,255,255,0.4);
+            color: var(--text-main);
             outline: none;
         }
-        .filter-group select:focus, .filter-group input:focus {
+        body.dark-mode .filters-menu .filter-group select, 
+        body.dark-mode .filters-menu .filter-group input {
+            background: rgba(15, 23, 42, 0.4);
+        }
+        .filters-menu .filter-group select:focus, 
+        .filters-menu .filter-group input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
         }
-        .btn-apply {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
+        body.dark-mode .filters-menu .filter-group select:focus, 
+        body.dark-mode .filters-menu .filter-group input:focus {
+            background: rgba(15, 23, 42, 0.7);
+        }
+        
+        .btn-reset {
+            display: inline-block;
             width: 100%;
-            font-weight: 700;
-            font-family: 'Outfit', sans-serif;
-            font-size: 16px;
-            cursor: pointer;
+            text-align: center;
             margin-top: 10px;
-            transition: all 0.2s;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
         }
-        .btn-apply:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
-        }
-
-        /* OPERATOR BADGES */
-        .operator-badge {
-            font-size: 11px;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 6px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .operator-badge.jio { background: #e0f2fe; color: #0284c7; }
-        .operator-badge.airtel { background: #fee2e2; color: #dc2626; }
-        .operator-badge.vi { background: #fef9c3; color: #ca8a04; }
-
-        @media (max-width: 768px) {
-            .plan-row-content { flex-direction: column; align-items: flex-start; gap: 20px; }
-            .btn-apply-orange { width: 100%; }
-            .plan-selection-header { flex-direction: column; align-items: stretch; }
-            .search-filter-wrapper input { width: 100%; }
-            .plan-comparison-header h1 { font-size: 2.5rem; }
-            .plan-tabs { justify-content: flex-start; }
+        .btn-reset:hover {
+            background: rgba(239, 68, 68, 0.08);
+            color: var(--error);
         }
     </style>
 </head>
