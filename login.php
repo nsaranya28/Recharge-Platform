@@ -66,29 +66,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #0b0f19;
+            background-color: #f8fafc;
             background-image: 
-                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 0.4) 0, transparent 50%), 
-                radial-gradient(at 50% 0%, hsla(263, 40%, 25%, 0.3) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.3) 0, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(245, 243, 255, 0.9) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, rgba(237, 233, 254, 0.8) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, rgba(243, 232, 255, 0.9) 0, transparent 50%);
             min-height: 100vh;
-            color: #f8fafc;
+            color: #1e293b;
         }
 
-        /* Set header layout styles specifically for login/register to align with new dark theme */
+        /* Set header layout styles specifically for login/register to align with white/violet theme */
         .navbar {
-            background: rgba(11, 15, 25, 0.7) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #edf2f7 !important;
         }
         .logo-text {
-            color: #f8fafc !important;
+            color: #6d28d9 !important;
         }
         .nav-link {
-            color: #94a3b8 !important;
+            color: #4b5563 !important;
         }
         .nav-link:hover, .nav-link.active {
-            color: #8b5cf6 !important;
-            background: rgba(139, 92, 246, 0.1) !important;
+            color: #6d28d9 !important;
+            background: rgba(109, 40, 217, 0.05) !important;
         }
 
         .auth-page-wrapper {
@@ -114,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             pointer-events: none;
             z-index: -1;
             filter: blur(100px);
-            opacity: 0.7;
+            opacity: 0.5;
         }
 
         .blob {
@@ -129,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             height: 320px;
             top: 5%;
             left: 10%;
-            background: linear-gradient(135deg, #7c3aed, #db2777);
+            background: linear-gradient(135deg, #a78bfa, #c084fc);
         }
 
         .blob-2 {
@@ -137,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             height: 280px;
             bottom: 5%;
             right: 10%;
-            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            background: linear-gradient(135deg, #c084fc, #818cf8);
             animation-delay: -5s;
             animation-duration: 25s;
         }
@@ -149,16 +150,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .auth-card {
-            background: rgba(15, 23, 42, 0.45);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(109, 40, 217, 0.08);
             border-radius: 28px;
             padding: 3rem 2.5rem;
             width: 100%;
             max-width: 440px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
-                        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px -15px rgba(109, 40, 217, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6);
             position: relative;
             z-index: 10;
             animation: cardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
@@ -177,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .auth-header h2 {
             font-size: 2.25rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #ffffff, #94a3b8);
+            background: linear-gradient(135deg, #4c1d95, #6d28d9);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
@@ -185,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .auth-header p {
-            color: #94a3b8;
+            color: #6b7280;
             font-size: 0.95rem;
             font-weight: 500;
         }
@@ -200,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: block;
             font-size: 0.85rem;
             font-weight: 600;
-            color: #94a3b8;
+            color: #4c1d95;
             margin-bottom: 0.5rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -215,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .input-icon-left {
             position: absolute;
             left: 1.25rem;
-            color: #64748b;
+            color: #8b5cf6;
             pointer-events: none;
             transition: color 0.3s;
             display: flex;
@@ -225,11 +226,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .input-custom {
             width: 100%;
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #ffffff;
+            border: 1px solid #ddd6fe;
             border-radius: 14px;
             padding: 1rem 1.25rem 1rem 3.25rem;
-            color: #f8fafc;
+            color: #1e293b;
             font-size: 0.95rem;
             font-family: inherit;
             outline: none;
@@ -237,18 +238,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .input-custom::placeholder {
-            color: #475569;
+            color: #94a3b8;
         }
 
         .input-custom:focus {
-            border-color: #8b5cf6;
-            background: rgba(15, 23, 42, 0.6);
-            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15),
-                        0 4px 20px -2px rgba(139, 92, 246, 0.2);
+            border-color: #6d28d9;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.1),
+                        0 4px 20px -2px rgba(109, 40, 217, 0.08);
         }
 
         .input-custom:focus + .input-icon-left {
-            color: #8b5cf6;
+            color: #6d28d9;
         }
 
         .password-toggle-btn {
@@ -256,7 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             right: 1.25rem;
             background: none;
             border: none;
-            color: #64748b;
+            color: #8b5cf6;
             cursor: pointer;
             padding: 0;
             display: flex;
@@ -266,13 +267,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .password-toggle-btn:hover {
-            color: #f8fafc;
+            color: #6d28d9;
         }
 
         .btn-auth-gradient {
             width: 100%;
             padding: 1rem;
-            background: linear-gradient(135deg, #7c3aed, #ec4899);
+            background: linear-gradient(135deg, #6d28d9, #8b5cf6);
             color: #fff;
             border: none;
             border-radius: 14px;
@@ -280,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 10px 20px -5px rgba(109, 40, 217, 0.3);
             margin-top: 1rem;
             display: flex;
             align-items: center;
@@ -290,26 +291,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .btn-auth-gradient:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 30px -5px rgba(124, 58, 237, 0.6),
-                        0 0 0 4px rgba(124, 58, 237, 0.1);
+            box-shadow: 0 15px 30px -5px rgba(109, 40, 217, 0.4),
+                        0 0 0 4px rgba(109, 40, 217, 0.1);
         }
 
         .demo-credentials-card {
-            background: rgba(124, 58, 237, 0.08);
-            border: 1px dashed rgba(139, 92, 246, 0.3);
+            background: rgba(109, 40, 217, 0.04);
+            border: 1px dashed rgba(109, 40, 217, 0.2);
             border-radius: 16px;
             padding: 1rem 1.25rem;
             margin-bottom: 2rem;
             font-size: 0.85rem;
             line-height: 1.5;
-            color: #cbd5e1;
+            color: #4b5563;
             display: flex;
             flex-direction: column;
             gap: 0.25rem;
         }
 
         .demo-credentials-card strong {
-            color: #c084fc;
+            color: #6d28d9;
         }
 
         /* Alert overrides */
@@ -325,33 +326,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .auth-alert-danger {
-            background: rgba(239, 68, 68, 0.1);
-            border-color: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
+            background: #fef2f2;
+            border-color: #fee2e2;
+            color: #ef4444;
         }
 
         .auth-alert-success {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: rgba(16, 185, 129, 0.2);
-            color: #a7f3d0;
+            background: #ecfdf5;
+            border-color: #d1fae5;
+            color: #10b981;
         }
 
         .auth-footer-text {
             text-align: center;
             margin-top: 2rem;
             font-size: 0.9rem;
-            color: #94a3b8;
+            color: #6b7280;
         }
 
         .auth-footer-text a {
-            color: #a78bfa;
+            color: #6d28d9;
             text-decoration: none;
             font-weight: 600;
             transition: color 0.2s;
         }
 
         .auth-footer-text a:hover {
-            color: #c084fc;
+            color: #5b21b6;
             text-decoration: underline;
         }
     </style>
